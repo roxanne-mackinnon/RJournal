@@ -1,0 +1,25 @@
+.calendar > * {
+    border: 1px solid black;
+    margin: 3px;
+    text-align: center;
+    max-width: 300px;
+}
+
+.month-selector {
+    text-align: center;
+}
+
+.month-selector > * {
+    margin: 10px;
+    user-select: none;
+}
+
+.month-selector > *:hover {
+    background-color: gainsboro;
+}
+
+.month-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0px;
+}
