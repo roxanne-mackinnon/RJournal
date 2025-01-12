@@ -1,0 +1,28 @@
+.note-container {
+    display: inline-block;
+    width: 50%;
+    box-sizing: border-box;
+    vertical-align: top;
+    height: 100vh;
+    overflow: scroll;
+    padding: 5px;
+    border: 1px solid black;
+}
+
+.date-group {
+    display: flex;
+    border: 1px dashed green;
+    justify-content: left;
+}
+
+.date-group > * {
+    flex: 50px;
+}
+
+.note {
+    border: 1px dashed black;
+    margin: 10px;
+    padding: 7px;
+}
+
+

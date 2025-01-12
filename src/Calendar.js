@@ -1,11 +1,15 @@
 import './Calendar.css';
 import {datesToDisplay, MONTHS} from './dateutils';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
-export default function Calendar() {
+export default function Calendar({onMonthChanged}) {
     const [date,setDate] = useState(new Date());
     const days = datesToDisplay(date);
-    console.log(days);
+
+    useEffect(() => {
+        onMonthChanged(date);
+    }, [date]);
+    
     return (
         <div className="calendar">
             <p>{date.getFullYear()}</p>

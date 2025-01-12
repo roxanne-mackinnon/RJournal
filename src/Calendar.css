@@ -1,3 +1,10 @@
+.calendar {
+    display: inline-block;
+    width: 50%;
+    vertical-align: top;
+    height: 100vh;
+}
+
 .calendar > * {
     border: 1px solid black;
     margin: 3px;
