@@ -27,6 +27,12 @@ export function daysInLastMonth(date) {
     return copyDate.getDate();    
 }
 
+// date is between start and end, inclusive
+// ASSUMES start < end
+export function dateIsBetween(date, start, end) {
+    return date >= start && date <= end;
+}
+
 export function datesToDisplay(date) {
     let result = [];
     let precedingSunday = dateOfPrecedingSunday(date);

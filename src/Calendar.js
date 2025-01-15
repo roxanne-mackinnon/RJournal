@@ -1,13 +1,23 @@
 import './Calendar.css';
-import {datesToDisplay, MONTHS} from './dateutils';
+import {datesToDisplay, daysInMonth, MONTHS} from './dateutils';
 import {useState, useEffect} from 'react';
 
-export default function Calendar({onMonthChanged}) {
+//  Calendar component for displaying ranges of dates, old-school calendar style.
+//  'onRangeSelected': callback function of two parameters, start date and end date (exclusive)
+//    these dates represent the dates which the parent should display, representing either that the
+//    month has changed or the user has click-and-dragged over a set of continuous days
+export default function Calendar({onRangeSelected}) {
     const [date,setDate] = useState(new Date());
     const days = datesToDisplay(date);
 
     useEffect(() => {
-        onMonthChanged(date);
+        // not sure how to handle daylight savings...
+        // Should do between 12:00AM on first of month until just before 12:00AM of start of next month.
+        const firstOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        const lastOfMonth = new Date(date.getFullYear(), date.getMonth()+1, 1, 0, 0, -1);
+        onRangeSelected(firstOfMonth, lastOfMonth);
+
+        // can change this code later to account for different types of selecting ranges e.g. selecting multiple months or click-n-dragging over a range of dates
     }, [date]);
     
     return (

@@ -22,6 +22,8 @@ export const notes = [
     new Note("Apartment Hunting", "Amanda and I toured a new apartment today, compared to what we pay now it would be a huge step up! In-unit washer-dryer, filtered water from the fridge, and counter space to cook? Count me in!",
         new Date(2024, 5, 3, 15, 21)),
     new Note("Welcome to my Journal!", "Developing a new journal application. Entries may or may not be correlated to the real life experiences of the app developer.",
-        new Date(2024, 5, 1, 12))
+        new Date(2024, 5, 1, 12)),
+    new Note("Happy new Year!!!", "Lots of new goals for this year. I want to get a job as a software engineer, build a top-of-the-line pc, and read 3 textbooks!",
+        new Date(2025, 0, 1, 0, 15))
 ]
     

@@ -3,6 +3,7 @@ import './NoteContainer.css';
 // Group the array of notes by dates (without modifying the original array)
 // Return a result of the form [{creationDate: <date>, notes:[...]}, ...]
 function groupNotesByDate(notes) {
+    if (notes === null) return null;
     if (notes.length == 0) return [];
     let sortedNotes = notes.toSorted();
 
@@ -42,7 +43,7 @@ export default function NoteContainer({notes, startDate, endDate}) {
 
     return (
         <div className="note-container">
-            {groupedNotes.map(group => 
+            {groupedNotes?.map(group => 
             <>
                 <h2>{group.creationDate.toDateString()}</h2>
                 <div className="date-group">
