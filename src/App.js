@@ -1,8 +1,9 @@
-import './App.css';
-import {Note, notes} from './notedata'
+import {notes} from './notedata'
 import Calendar from './Calendar';
-import NoteContainer from './NoteContainer';
+import NoteListView from './NoteListView';
 import {useState} from 'react';
+import {LeftRightView} from './LeftRightView';
+import {AppController} from './AppController'
 
 function App() {
   let [date, setDate] = useState(new Date());
@@ -16,12 +17,14 @@ function App() {
     filteredNotes = notes.filter(note => note.creationDate >= rangeStart && note.creationDate <= rangeEnd);
   }
 
-  return (
-    <div className="app-container">
-      <NoteContainer notes={filteredNotes} />
-      <Calendar onRangeSelected={(start, end) => {setRangeStart(start); setRangeEnd(end)}}/>
-    </div>
+  const result =  (
+    <LeftRightView>
+        <NoteListView notes={filteredNotes} />
+        <Calendar onRangeSelected={(start,end) => {setRangeStart(start); setRangeEnd(end)}} />
+    </LeftRightView>
   );
+
+  return <AppController />
 }
 
 export default App;

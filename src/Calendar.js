@@ -6,8 +6,8 @@ import {useState, useEffect} from 'react';
 //  'onRangeSelected': callback function of two parameters, start date and end date (exclusive)
 //    these dates represent the dates which the parent should display, representing either that the
 //    month has changed or the user has click-and-dragged over a set of continuous days
-export default function Calendar({onRangeSelected}) {
-    const [date,setDate] = useState(new Date());
+export default function Calendar({date, setDate, onRangeSelected}) {
+
     const days = datesToDisplay(date);
 
     useEffect(() => {

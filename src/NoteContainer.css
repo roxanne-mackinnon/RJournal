@@ -16,14 +16,12 @@
     justify-content: left;
 }
 
-.date-group > * {
-    flex: 50px;
-}
-
 .note {
     border: 1px dashed black;
-    margin: 10px;
-    padding: 7px;
+    padding: 5px;
+    margin: 5px;
+    width: 200px;
+    box-sizing: border-box;
 }
 
 

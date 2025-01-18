@@ -30,7 +30,7 @@ function groupNotesByDate(notes) {
 
 // Given a list of notes, display them grouped by date, only showing the notes
 // within the specified (inclusive) range
-export default function NoteContainer({notes, startDate, endDate}) {
+export default function NoteListView({notes, onNoteSelected}) {
     // should sort notes by date and display each note in the 'day' section that it appears in 
     // lets just do a quick and dirty algorithm
 
@@ -48,9 +48,9 @@ export default function NoteContainer({notes, startDate, endDate}) {
                 <h2>{group.creationDate.toDateString()}</h2>
                 <div className="date-group">
                     {group.notes.map(note => 
-                        <div className="note">
+                        <div className="note" onClick={() => onNoteSelected(note)}>
                             <h3>{note.title}</h3>
-                            <p>{note.content}</p>
+                            <p>{truncateText(note.content, 100)}</p>
                         </div>
                     )}
                 </div>
