@@ -6,9 +6,10 @@
 import {useState, useEffect} from 'react';
 import NoteListView from './NoteListView';
 import Calendar from './Calendar';
-import {notes} from './notedata';
 import {LeftRightView} from './LeftRightView';
 import NoteEditor from './NoteEditor';
+import {NoteController} from './NoteController';
+
 
 
 // container for the note list, calendar, and note editor
@@ -22,12 +23,22 @@ export function AppController() {
 
     const isEditing = (activeNote !== null);
 
+    const onCalendarRangeSelected = (start, end) => {
+        setFilteredNotes(NoteController.findBetweenDates(start, end));
+    }
+
+    const onNoteEditSubmit = (note) => {
+        // should wrap with a try/catch later once we have an error component
+        NoteController.putNote(note);
+        setActiveNote(null);
+    }
+
     return (
         <LeftRightView>
             <NoteListView notes={filteredNotes} onNoteSelected={(note) => setActiveNote(note)}/>
-            {isEditing ? <NoteEditor note={activeNote} setNote={setActiveNote} onSubmit={() => setActiveNote(null)} /> :
-                <Calendar date={date} setDate={setDate} onRangeSelected={(startDate, endDate) => setFilteredNotes(
-                                        notes.filter(note => note.creationDate >= startDate && note.creationDate <= endDate))}/>}
+                {isEditing
+                ?   <NoteEditor note={activeNote} setNote={setActiveNote} onSubmit={onNoteEditSubmit} />
+                :   <Calendar date={date} setDate={setDate} onRangeSelected={onCalendarRangeSelected}/>}
         </LeftRightView>
     );
 }

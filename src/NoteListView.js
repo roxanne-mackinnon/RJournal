@@ -1,4 +1,7 @@
 import './NoteContainer.css';
+import {isSameDay} from './dateutils';
+import {useContext} from 'react';
+import {NoteContext} from './NoteController';
 
 // Group the array of notes by dates (without modifying the original array)
 // Return a result of the form [{creationDate: <date>, notes:[...]}, ...]
@@ -13,7 +16,7 @@ function groupNotesByDate(notes) {
 
     for (let note of sortedNotes) {
         // while we're still on the same day, keep adding notes to the same group
-        if (note.creationDate.toDateString() === lastDate.toDateString()) {
+        if (isSameDay(note.creationDate, lastDate)) {
             result[currentIndex].notes.push(note);
         }
         // otherwise, if its not still the same day, append the last group to the list and make a new one
@@ -34,12 +37,13 @@ export default function NoteListView({notes, onNoteSelected}) {
     // should sort notes by date and display each note in the 'day' section that it appears in 
     // lets just do a quick and dirty algorithm
 
-    const groupedNotes = groupNotesByDate(notes);
 
     const truncateText = (text, nChars) => {
         if (text.length <= nChars) {return text;}
         return `${text.substring(0,nChars-3)}...`;
     };
+
+    const groupedNotes = groupNotesByDate(notes);
 
     return (
         <div className="note-container">

@@ -25,5 +25,5 @@ export const notes = [
         new Date(2024, 5, 1, 12)),
     new Note(10,"Happy new Year!!!", "Lots of new goals for this year. I want to get a job as a software engineer, build a top-of-the-line pc, and read 3 textbooks!",
         new Date(2025, 0, 1, 0, 15))
-]
+];
     
