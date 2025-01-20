@@ -33,12 +33,13 @@ export function AppController() {
         setActiveNote(null);
     }
 
+    const leftView = <NoteListView notes={filteredNotes} onNoteSelected={(note) => setActiveNote(note)}/>;
+    const rightView = isEditing
+                        ? <NoteEditor note={activeNote} setNote={setActiveNote} onSubmit={onNoteEditSubmit} onCancel={() => setActiveNote(null)}/>
+                        : <Calendar date={date} setDate={setDate} onRangeSelected={onCalendarRangeSelected} />;
+
+
     return (
-        <LeftRightView>
-            <NoteListView notes={filteredNotes} onNoteSelected={(note) => setActiveNote(note)}/>
-                {isEditing
-                ?   <NoteEditor note={activeNote} setNote={setActiveNote} onSubmit={onNoteEditSubmit} />
-                :   <Calendar date={date} setDate={setDate} onRangeSelected={onCalendarRangeSelected}/>}
-        </LeftRightView>
+        <LeftRightView left={leftView} right={rightView} />
     );
 }

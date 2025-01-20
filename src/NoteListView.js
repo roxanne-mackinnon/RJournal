@@ -1,4 +1,4 @@
-import './NoteContainer.css';
+import './css/NoteContainer.css';
 import {isSameDay} from './dateutils';
 import {useContext} from 'react';
 import {NoteContext} from './NoteController';
