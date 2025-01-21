@@ -9,7 +9,7 @@ import Calendar from './Calendar';
 import {LeftRightView} from './LeftRightView';
 import NoteEditor from './NoteEditor';
 import {NoteController} from './NoteController';
-
+import LoginPage from './LoginPage';
 
 
 // container for the note list, calendar, and note editor
@@ -20,6 +20,8 @@ export function AppController() {
     // The note that has been clicked for editing/viewing, or null.
     const [activeNote, setActiveNote] = useState(null);
     const [date, setDate] = useState(new Date());
+
+    const [authenticated, setAuthenticated] = useState(false);
 
     const isEditing = (activeNote !== null);
 
@@ -39,7 +41,7 @@ export function AppController() {
                         : <Calendar date={date} setDate={setDate} onRangeSelected={onCalendarRangeSelected} />;
 
 
-    return (
-        <LeftRightView left={leftView} right={rightView} />
+    return (authenticated ? <LeftRightView left={leftView} right={rightView} />
+                          : <LoginPage setAuthenticated={setAuthenticated} />
     );
 }
