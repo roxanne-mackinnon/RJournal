@@ -1,0 +1,10 @@
+#error-toast {
+    width: 200px;
+    height:max-content;
+    box-sizing: border-box;
+    position: absolute;
+    background-color: red;
+    padding: 20px;
+    right: 5%;
+    bottom: 5%;
+}
