@@ -11,14 +11,8 @@ export default function NoteEditor({note, onSubmit, onCancel}) {
 
     return (
     <div className="note-editor">
-        <div className="NE-title">
-            <label for="noteTitle">Title:</label>
-            <input id="noteTitle" type="text" value={noteContent.title} onChange={(e) => setNoteContent({...noteContent, 'title': e.target.value})}></input>
-        </div> 
-        <div className="NE-content">
-            <label for="noteContent">Content: </label>
-            <textarea id="noteContent" onChange={(e) => setNoteContent({...noteContent, 'content': e.target.value})}>{noteContent.content}</textarea>
-        </div>
+        <input className="NE-title" id="noteTitle" type="text" value={noteContent.title} onChange={(e) => setNoteContent({...noteContent, 'title': e.target.value})}></input>
+        <textarea className="NE-content"id="noteContent" onChange={(e) => setNoteContent({...noteContent, 'content': e.target.value})}>{noteContent.content}</textarea>
         <button onClick={() => onSubmit(noteContent)}>Submit</button>
         <button onClick={() => onCancel()}>Cancel</button>
     </div>);
