@@ -3,8 +3,13 @@
     height:max-content;
     box-sizing: border-box;
     position: absolute;
-    background-color: red;
+    background-color: var(--red);
+    border-radius: 5px;
     padding: 20px;
     right: 5%;
     bottom: 5%;
+}
+
+.app-controller {
+    background-color: var(--brown);
 }

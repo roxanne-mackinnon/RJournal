@@ -3,8 +3,8 @@
     padding-top: 5px;
     box-sizing: border-box;
     height: 100%;
-    background-color: cornsilk;
-    border: 1px solid black;
+    background-color: var(--lightbrown);
+    border: 1px solid (--black);
     text-align: center;
 }
 

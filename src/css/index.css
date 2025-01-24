@@ -1,21 +1,13 @@
 body {
   margin: 0;
   height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Times New Roman', 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
 
 #root {
   height: 100%;
   width: 100%;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  background-color: var(--lightbrown);
 }
 
 *:hover {
@@ -24,4 +16,13 @@ code {
 
 a:hover {
   cursor: pointer;
+}
+
+:root {
+  --black: #0a0908;
+  --darkbrown: #49111c;
+  --white:  #f2f4f3;
+  --lightbrown: #a9927d;
+  --brown: #5e503f;
+  --red: #ef271b;
 }

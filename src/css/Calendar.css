@@ -1,16 +1,17 @@
 .calendar {
-    background-color: cornsilk;
+    background-color: var(--lightbrown);
     height: 100%;
     text-align: center;
-    margin: auto auto;
+    box-sizing: border-box;
+    padding-top: 50px;
 }
 
 .calendar > * {
     border: 1px solid black;
-    margin: 3px;
+    margin: auto;
     text-align: center;
     max-width: 300px;
-    background-color: white;
+    background-color: var(--white);
 }
 
 .month-selector {
@@ -18,8 +19,8 @@
 }
 
 .month-selector > * {
-    margin: 10px;
     user-select: none;
+    margin: 10px;
 }
 
 .month-selector > *:hover {
@@ -29,5 +30,4 @@
 .month-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 0px;
 }
