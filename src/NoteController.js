@@ -7,7 +7,7 @@ export class NoteController {
     static notes = notes;
     static noteIdCounter = 0;
 
-    static findById(id) {
+    static async findById(id) {
         for (let note of this.notes) {
             if (note.id === id) {
                 return note;
@@ -16,7 +16,7 @@ export class NoteController {
         return null;
     }
 
-    static findBetweenDates(startDate, endDate) {
+    static async findBetweenDates(startDate, endDate) {
         let result = [];
         for (let note of this.notes) {
             if (note.creationDate >= startDate && note.creationDate <= endDate) {
@@ -26,11 +26,11 @@ export class NoteController {
         return result;
     }
 
-    static findAll() {
+    static async findAll() {
         return this.notes;
     }
 
-    static findByDate(date) {
+    static async findByDate(date) {
         let result = [];
         for (let note of this.notes) {
             if (isSameDay(note.creationDate, date)) {
@@ -40,14 +40,14 @@ export class NoteController {
         return result;
     }
 
-    static postNote(newNote) {
+    static async postNote(newNote) {
         newNote.id = this.noteIdCounter;
         this.noteIdCounter++;
         this.notes.push(newNote);
         return newNote;
     }
 
-    static putNote(note) {
+    static async putNote(note) {
         for (let i = 0; i < this.notes.length; i++) {
             if (note.id === this.notes[i].id) {
                 this.notes[i].title = note.title;
@@ -58,7 +58,7 @@ export class NoteController {
         throw new Error(`Note with id ${note.id} does not exist, must use PUT with existing note id.`);
     }
 
-    static deleteById(noteId) {
+    static async deleteById(noteId) {
         for (let i = 0; i < this.notes.length; i++) {
             if (this.notes[i].id === noteId) {
                 // remove this index from array

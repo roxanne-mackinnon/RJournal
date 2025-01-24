@@ -39,12 +39,21 @@ export function AppController() {
 
 
     const onCalendarRangeSelected = (start, end) => {
-        setFilteredNotes(NoteController.findBetweenDates(start, end));
+        const findBetweenDates = async () => {await NoteController.findBetweenDates(start, end)
+                                                .then(notes => setFilteredNotes(notes))
+                                                .catch(err => setError(error))}
+        findBetweenDates();
     }
 
     const onNoteEditSubmit = (note) => {
         // should wrap with a try/catch later once we have an error component
-        NoteController.putNote(note);
+        const putNewNote = async () => {await NoteController.putNote(note)
+                                                .then(newNote => setFilteredNotes(filteredNotes.map(note => {
+                                                    if (note.id === newNote.id) return newNote;
+                                                    return note;
+                                                })))
+                                                .catch((err) => setError(err))};
+        putNewNote();
         setActiveNote(null);
     }
 
