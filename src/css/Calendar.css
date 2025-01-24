@@ -1,5 +1,8 @@
 .calendar {
-    vertical-align: top;
+    background-color: cornsilk;
+    height: 100%;
+    text-align: center;
+    margin: auto auto;
 }
 
 .calendar > * {
@@ -7,6 +10,7 @@
     margin: 3px;
     text-align: center;
     max-width: 300px;
+    background-color: white;
 }
 
 .month-selector {

@@ -62,7 +62,6 @@ export function AppController() {
                         ? <NoteEditor note={activeNote} setNote={setActiveNote} onSubmit={onNoteEditSubmit} onCancel={() => setActiveNote(null)}/>
                         : <>
                             <Calendar date={date} setDate={setDate} onRangeSelected={onCalendarRangeSelected} />
-                            <button onClick={() => setError(new Error("Test error message."))}>Set Error</button>
                           </>
 
 
