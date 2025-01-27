@@ -45,7 +45,7 @@ export function datesToDisplay(date) {
     let currMonthDays = daysInMonth(date);
 
     // if the preceding sunday is the first of the month, we should skip adding days from last month
-    if (precedingSunday != 1) {
+    if (precedingSunday !== 1) {
         for (let i = precedingSunday; i <= lastMonthDays; i++) {
             result.push(i);
         }
@@ -57,7 +57,7 @@ export function datesToDisplay(date) {
     }
 
     // add days until last satuday, if last saturday falls in next month
-    if (lastSaturday != currMonthDays) {
+    if (lastSaturday !== currMonthDays) {
         for (let i = 1; i <= lastSaturday; i++) {
             result.push(i);
         }

@@ -3,7 +3,7 @@
 // for example, lets say i click on a note, i then want to display the note on the right and give the option to edit or delete it.
 // it will control the state
 
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import NoteListView from './NoteListView';
 import Calendar from './Calendar';
 import {LeftRightView} from './LeftRightView';
@@ -18,7 +18,6 @@ export function AppController() {
 
     // Notes that the notelistview should display, to be filtered (either by date or some other means like text search)
     const [filteredNotes, setFilteredNotes] = useState([]);    
-
     // The note that has been clicked for editing/viewing, or null.
     const [activeNote, setActiveNote] = useState(null);
     // Current date that should be used as the basis for the calendar
@@ -38,12 +37,12 @@ export function AppController() {
     }, [error]);
 
 
-    const onCalendarRangeSelected = (start, end) => {
+    const onCalendarRangeSelected = useCallback((start, end) => {
         const findBetweenDates = async () => {await NoteController.findBetweenDates(start, end)
                                                 .then(notes => setFilteredNotes(notes))
-                                                .catch(err => setError(error))}
+                                                .catch(err => setError(err))}
         findBetweenDates();
-    }
+    }, []);
 
     const onNoteEditSubmit = (note) => {
         // should wrap with a try/catch later once we have an error component
@@ -52,17 +51,15 @@ export function AppController() {
                                                     if (note.id === newNote.id) return newNote;
                                                     return note;
                                                 })))
-                                                .catch((err) => setError(err))};
+                                                .catch(err => setError(err))};
         putNewNote();
         setActiveNote(null);
     }
 
-    const leftView = <NoteListView notes={filteredNotes} onNoteSelected={(note) => setActiveNote(note)}/>;
+    const leftView = <NoteListView notes={filteredNotes} onNoteSelected={note => setActiveNote(note)} />
     const rightView = isEditing
                         ? <NoteEditor note={activeNote} setNote={setActiveNote} onSubmit={onNoteEditSubmit} onCancel={() => setActiveNote(null)}/>
-                        : <>
-                            <Calendar date={date} setDate={setDate} onRangeSelected={onCalendarRangeSelected} />
-                          </>
+                        : <Calendar date={date} setDate={setDate} onRangeSelected={onCalendarRangeSelected} />
 
 
     return (

@@ -1,4 +1,4 @@
-import {dateOfPrecedingSunday, dateOfLastSaturday, daysInLastMonth, datesToDisplay} from "./dateutils";
+import {dateOfPrecedingSunday, dateOfLastSaturday, daysInLastMonth, datesToDisplay} from "../utils/dateutils";
 
 const dates = [new Date(2025, 0, 4), new Date(1985, 3, 15), new Date(2001, 5, 12)];
 

@@ -1,6 +1,6 @@
 import './css/Calendar.css';
-import {datesToDisplay, daysInMonth, MONTHS} from './dateutils';
-import {useState, useEffect} from 'react';
+import {datesToDisplay, MONTHS} from './utils/dateutils';
+import {useEffect} from 'react';
 
 //  Calendar component for displaying ranges of dates, old-school calendar style.
 //  'onRangeSelected': callback function of two parameters, start date and end date (exclusive)
@@ -18,6 +18,7 @@ export default function Calendar({date, setDate, onRangeSelected}) {
         onRangeSelected(firstOfMonth, lastOfMonth);
 
         // can change this code later to account for different types of selecting ranges e.g. selecting multiple months or click-n-dragging over a range of dates
+        // eslint-disable-next-line
     }, [date]);
     
     return (
