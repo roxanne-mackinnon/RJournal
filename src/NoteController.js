@@ -1,7 +1,7 @@
 import {isSameDay} from './utils/dateutils';
 import {Note} from './models/Note';
 
-const notes = [
+const notedata = [
     new Note(0, "Gift Ideas", "KitchenAid stand mixer, Needoh Nice Cube, The Essential DTWOF, 'Under the Lemon Tree' by Replica, and a copy of Stardew Valley",
         new Date(2024, 11, 10, 13, 43)),
     new Note(1, "Title", "Content",
@@ -28,8 +28,9 @@ const notes = [
 // singleton class for fetching notes
 export class NoteController {
     
-    static notes = notes;
-    static noteIdCounter = 0;
+
+    static notes = notedata;
+    static idCounter = 0;
 
     static async findById(id) {
         for (let note of this.notes) {
@@ -65,8 +66,11 @@ export class NoteController {
     }
 
     static async postNote(newNote) {
-        newNote.id = this.noteIdCounter;
-        this.noteIdCounter++;
+        // set ID and creation date for note
+        newNote.id = this.idCounter;  
+        newNote.creationDate = new Date();
+
+        this.idCounter = this.idCounter + 1;
         this.notes.push(newNote);
         return newNote;
     }

@@ -55,7 +55,7 @@ function NoteDateView({dateString, ...props}) {
 
 // Given a list of notes, display them grouped by date, only showing the notes
 // within the specified (inclusive) range
-export default function NoteListView({notes, onNoteSelected}) {
+export default function NoteListView({notes, onNoteSelected, onCreateNote}) {
     // should sort notes by date and display each note in the 'day' section that it appears in 
     // lets just do a quick and dirty algorithm
 
@@ -63,13 +63,16 @@ export default function NoteListView({notes, onNoteSelected}) {
 
     return (
         <div className="note-container">
-            {groupedNotes?.map(group => 
-                <NoteDateView dateString={group.creationDate.toDateString()}>
-                    {group.notes.map(note => 
-                        <NoteView note={note} onClick={() => onNoteSelected(note)} />
-                    )}
-                </NoteDateView>
-            )}
+            <div className="note-list-view">
+                {groupedNotes?.map(group =>
+                    <NoteDateView dateString={group.creationDate.toDateString()}>
+                        {group.notes.map(note =>
+                            <NoteView note={note} onClick={() => onNoteSelected(note)} />
+                        )}
+                    </NoteDateView>
+                )}
+            </div>
+            <button id="create-note-btn" onClick={() => onCreateNote()}>Click Me!</button>
         </div>
     );
 }

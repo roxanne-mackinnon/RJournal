@@ -10,6 +10,7 @@ import {LeftRightView} from './LeftRightView';
 import NoteEditor from './NoteEditor';
 import {NoteController} from './NoteController';
 import LoginPage from './LoginPage';
+import {Note, EmptyNote} from './models/Note';
 import './css/AppController.css';
 
 
@@ -28,6 +29,8 @@ export function AppController() {
     // after a short timeout
     const [error, setError] = useState(null);
 
+    const [isCreating, setIsCreating] = useState(false);
+
     const isEditing = (activeNote !== null);
 
     useEffect(() => {
@@ -39,24 +42,36 @@ export function AppController() {
 
     const onCalendarRangeSelected = useCallback((start, end) => {
         const findBetweenDates = async () => {await NoteController.findBetweenDates(start, end)
-                                                .then(notes => setFilteredNotes(notes))
-                                                .catch(err => setError(err))}
+                                                .then(notes => setFilteredNotes(notes))}
+                                                //.catch(err => setError(err))}
         findBetweenDates();
     }, []);
 
     const onNoteEditSubmit = (note) => {
-        // should wrap with a try/catch later once we have an error component
-        const putNewNote = async () => {await NoteController.putNote(note)
-                                                .then(newNote => setFilteredNotes(filteredNotes.map(note => {
-                                                    if (note.id === newNote.id) return newNote;
-                                                    return note;
-                                                })))
+        // if creating a new note, we should 'post', otherwise, put.
+        let newNote;
+        if (isCreating) {
+            newNote = NoteController.postNote(note);
+        }
+        else {
+            newNote = NoteController.putNote(note);
+        }
+
+        const alterOrCreateNote = async () => {await newNote
+                                                .then(n => setFilteredNotes([...filteredNotes, n]))
                                                 .catch(err => setError(err))};
-        putNewNote();
+        alterOrCreateNote().then(resp => console.log(resp));
         setActiveNote(null);
+        setIsCreating(false);
     }
 
-    const leftView = <NoteListView notes={filteredNotes} onNoteSelected={note => setActiveNote(note)} />
+    const onCreateNote = () => {
+        // need to save some state to remember that we are 'creating' instead of 'editing'
+        setIsCreating(true);
+        setActiveNote(new EmptyNote());
+    }
+    
+    const leftView = <NoteListView notes={filteredNotes} onNoteSelected={note => {setActiveNote(note); setIsCreating(false)}} onCreateNote={onCreateNote}/>
     const rightView = isEditing
                         ? <NoteEditor note={activeNote} setNote={setActiveNote} onSubmit={onNoteEditSubmit} onCancel={() => setActiveNote(null)}/>
                         : <Calendar date={date} setDate={setDate} onRangeSelected={onCalendarRangeSelected} />
