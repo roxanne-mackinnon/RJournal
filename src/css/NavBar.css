@@ -1,0 +1,11 @@
+.navbar {
+    list-style-type: none;
+    padding: 0;
+}
+
+.navbar > li {
+    display: inline-block;
+    border: 1px solid var(--black);
+    margin: 5px;
+    padding: 10px;
+}

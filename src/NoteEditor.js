@@ -1,4 +1,3 @@
-import {useState, useRef} from 'react';
 import './css/NoteEditor.css';
 
 export default function NoteEditor({note, setNote, onSubmit, onCancel}) {

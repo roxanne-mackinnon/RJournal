@@ -1,0 +1,14 @@
+.sidebar {
+    list-style-type: none;
+    padding: 0;
+    background-color: var(--brown);
+    margin: 0;
+}
+
+.sidebar > li {
+    padding: 10px;
+    background-color: var(--black);
+    color: var(--white);
+    border: 2px solid var(--darkgray);
+}
+

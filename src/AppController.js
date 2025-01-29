@@ -10,9 +10,12 @@ import {LeftRightView} from './LeftRightView';
 import NoteEditor from './NoteEditor';
 import {NoteController} from './NoteController';
 import LoginPage from './LoginPage';
-import {Note, EmptyNote} from './models/Note';
+import {EmptyNote} from './models/Note';
+import AppLayout from './AppLayout';
+import Scroll from './assets/Scroll.svg';
+import NavBar from './NavBar';
+import SideBar from './SideBar';
 import './css/AppController.css';
-
 
 // container for the note list, calendar, and note editor
 export function AppController() {
@@ -70,18 +73,15 @@ export function AppController() {
         setIsCreating(true);
         setActiveNote(new EmptyNote());
     }
-    
-    const leftView = <NoteListView notes={filteredNotes} onNoteSelected={note => {setActiveNote(note); setIsCreating(false)}} onCreateNote={onCreateNote}/>
-    const rightView = isEditing
-                        ? <NoteEditor note={activeNote} setNote={setActiveNote} onSubmit={onNoteEditSubmit} onCancel={() => setActiveNote(null)}/>
-                        : <Calendar date={date} setDate={setDate} onRangeSelected={onCalendarRangeSelected} />
 
-
+    const logo = <img src={Scroll} alt="RJournal Logo"/>
+    const navbar = <NavBar />;
+    const sidebar = <SideBar />
+    const main = <NoteListView notes={filteredNotes} onNoteSelected={note => {setActiveNote(note); setIsCreating(false)}} onCreateNote={onCreateNote} />
     return (
     <>
-        {authenticated ? <LeftRightView left={leftView} right={rightView} />
+        {authenticated ? <AppLayout logo={logo} navbar={navbar} sidebar={sidebar} main={main} />
                        : <LoginPage setAuthenticated={setAuthenticated} />}
         {error && <p id="error-toast">{error.name}: {error.message}</p>}
-    </>
-    );
+    </>);
 }

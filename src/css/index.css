@@ -25,4 +25,7 @@ a:hover {
   --lightbrown: #a9927d;
   --brown: #5e503f;
   --red: #ef271b;
+  --lightgray: gainsboro;
+  --gray: #BEBEBE;
+  --darkgray: #808080;
 }
