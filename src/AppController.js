@@ -4,10 +4,8 @@
 // it will control the state
 
 import {useState, useEffect, useCallback} from 'react';
+import {DateFilteringContext} from './Contexts';
 import NoteListView from './NoteListView';
-import Calendar from './Calendar';
-import {LeftRightView} from './LeftRightView';
-import NoteEditor from './NoteEditor';
 import {NoteController} from './NoteController';
 import LoginPage from './LoginPage';
 import {EmptyNote} from './models/Note';
@@ -79,9 +77,9 @@ export function AppController() {
     const sidebar = <SideBar />
     const main = <NoteListView notes={filteredNotes} onNoteSelected={note => {setActiveNote(note); setIsCreating(false)}} onCreateNote={onCreateNote} />
     return (
-    <>
+    <DateFilteringContext.Provider value={[date, setDate, onCalendarRangeSelected]}>
         {authenticated ? <AppLayout logo={logo} navbar={navbar} sidebar={sidebar} main={main} />
                        : <LoginPage setAuthenticated={setAuthenticated} />}
         {error && <p id="error-toast">{error.name}: {error.message}</p>}
-    </>);
+    </DateFilteringContext.Provider>);
 }

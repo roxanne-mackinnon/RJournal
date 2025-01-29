@@ -20,7 +20,7 @@ export default function SideBar() {
     const Item = (id, desc, children) => ({'id': id, 'desc': desc, 'children': children||null});
 
     const items =[Item('all', 'All Notes'), Item('tags','Tags',[]),
-                  Item('date','Filter By Date', []), Item('search', 'Search', []), 
+                  Item('date','Filter By Date', [<Calendar />]), Item('search', 'Search', []), 
                   Item('trash', 'Trash / Archived Notes')];
     
     // but if one of the sidebar elements has a sublist we still want to expand that...
@@ -28,8 +28,8 @@ export default function SideBar() {
     return (
     <ul className="sidebar">
         {items.map(item => 
-            <li id={`sidebar-${item.id}`} style={isClicked(item.id) ? clickedStyle : null} onClick={() => toggleClicked(item.id)}>
-                {item.desc}
+            <li className="sidebar-item" id={`sidebar-item-${item.id}`} style={isClicked(item.id) ? clickedStyle : null} onClick={() => toggleClicked(item.id)}>
+                {<div className="sidebar-item">{item.desc}</div>}
                 {isClicked(item.id) && item.children}
             </li>
         )}  

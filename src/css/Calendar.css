@@ -1,16 +1,15 @@
 .calendar {
-    background-color: var(--lightbrown);
     height: 100%;
     text-align: center;
     box-sizing: border-box;
-    padding-top: 50px;
+    width: auto;
 }
 
 .calendar > * {
     border: 1px solid black;
     margin: auto;
     text-align: center;
-    max-width: 300px;
+    min-width: 100px;
     background-color: var(--white);
 }
 
@@ -20,7 +19,7 @@
 
 .month-selector > * {
     user-select: none;
-    margin: 10px;
+    margin: 5px;
 }
 
 .month-selector > *:hover {
@@ -30,4 +29,9 @@
 .month-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    gap: 0px;
+}
+
+.month-days > * {
+    margin: 2px;
 }
