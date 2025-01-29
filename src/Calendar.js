@@ -1,12 +1,15 @@
 import './css/Calendar.css';
 import {datesToDisplay, MONTHS} from './utils/dateutils';
-import {useEffect} from 'react';
+import {useEffect, useContext} from 'react';
+import {DateFilteringContext} from './Contexts';
 
 //  Calendar component for displaying ranges of dates, old-school calendar style.
 //  'onRangeSelected': callback function of two parameters, start date and end date (exclusive)
 //    these dates represent the dates which the parent should display, representing either that the
 //    month has changed or the user has click-and-dragged over a set of continuous days
-export default function Calendar({date, setDate, onRangeSelected}) {
+export default function Calendar() {
+
+    const [date, setDate, onRangeSelected] = useContext(DateFilteringContext);
 
     const days = datesToDisplay(date);
 
@@ -21,16 +24,26 @@ export default function Calendar({date, setDate, onRangeSelected}) {
         // eslint-disable-next-line
     }, [date]);
     
+    const decrementMonth = e => {
+        e.stopPropagation();
+        setDate(new Date(date.getFullYear(), date.getMonth() - 1));
+    }
+
+    const incrementMonth = e => {
+        e.stopPropagation();
+        setDate(new Date(date.getFullYear(), date.getMonth() + 1));
+    }
+
     return (
         <div className="calendar">
             <p>{date.getFullYear()}</p>
             <div className="month-selector">
-                <span onClick={() => setDate(new Date(date.getFullYear(), date.getMonth() - 1))}>Left</span>
+                <span onClick={decrementMonth}>Left</span>
                 <span>{MONTHS[date.getMonth()]}</span>
-                <span onClick={() => setDate(new Date(date.getFullYear(), date.getMonth() + 1))}>Right</span>
+                <span onClick={incrementMonth}>Right</span>
             </div>
             <div className="month-days">
-                {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day =>
+                {["S","M","T","W","Th","F","S"].map(day =>
                 <p>{day}</p>)}
                 {days.map(day => <p>{day}</p>)}
             </div>
