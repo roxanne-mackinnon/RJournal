@@ -7,7 +7,7 @@ import {DateFilteringContext} from './Contexts';
 //  'onRangeSelected': callback function of two parameters, start date and end date (exclusive)
 //    these dates represent the dates which the parent should display, representing either that the
 //    month has changed or the user has click-and-dragged over a set of continuous days
-export default function Calendar() {
+export default function Calendar(props) {
 
     const [date, setDate, onRangeSelected] = useContext(DateFilteringContext);
 
@@ -34,8 +34,9 @@ export default function Calendar() {
         setDate(new Date(date.getFullYear(), date.getMonth() + 1));
     }
 
+    const {classNames, ...restProp} = props;
     return (
-        <div className="calendar">
+        <div className={`calendar ${classNames}`} {...restProp}>
             <p>{date.getFullYear()}</p>
             <div className="month-selector">
                 <span onClick={decrementMonth}>Left</span>

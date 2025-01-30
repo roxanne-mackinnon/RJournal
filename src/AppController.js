@@ -4,7 +4,7 @@
 // it will control the state
 
 import {useState, useEffect, useCallback} from 'react';
-import {DateFilteringContext} from './Contexts';
+import {DateFilteringContext, SearchFilteringContext} from './Contexts';
 import NoteListView from './NoteListView';
 import {NoteController} from './NoteController';
 import LoginPage from './LoginPage';
@@ -22,23 +22,37 @@ export function AppController() {
     const [filteredNotes, setFilteredNotes] = useState([]);    
     // The note that has been clicked for editing/viewing, or null.
     const [activeNote, setActiveNote] = useState(null);
-    // Current date that should be used as the basis for the calendar
-    const [date, setDate] = useState(new Date());
     // If user is authenticated or not
     const [authenticated, setAuthenticated] = useState(false);
     // Current error. After being set to an error state, useEffect will automatically clear it
     // after a short timeout
     const [error, setError] = useState(null);
 
-    const [isCreating, setIsCreating] = useState(false);
+    /* States for filtering */
+    // Current date that should be used as the basis for the calendar
+    const [date, setDate] = useState(new Date());
+    // Search term to filter notes by
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const isEditing = (activeNote !== null);
+    const [isCreating, setIsCreating] = useState(false);
 
     useEffect(() => {
         if (error === null) return;
 
         setTimeout(() => setError(null), 5000);
     }, [error]);
+
+    useEffect(() => {
+        const fetchMatchingNotes = async () => {await NoteController.findByContentTitleContaining(searchTerm)
+                                                        .then(notes => {                                                            
+                                                            setFilteredNotes(notes);
+                                                            // also, reset any other filters
+                                                            setDate(new Date());
+                                                        });
+        }
+
+        fetchMatchingNotes();
+    }, [searchTerm]);
 
 
     const onCalendarRangeSelected = useCallback((start, end) => {
@@ -76,10 +90,14 @@ export function AppController() {
     const navbar = <NavBar />;
     const sidebar = <SideBar />
     const main = <NoteListView notes={filteredNotes} onNoteSelected={note => {setActiveNote(note); setIsCreating(false)}} onCreateNote={onCreateNote} />
+
     return (
-    <DateFilteringContext.Provider value={[date, setDate, onCalendarRangeSelected]}>
-        {authenticated ? <AppLayout logo={logo} navbar={navbar} sidebar={sidebar} main={main} />
-                       : <LoginPage setAuthenticated={setAuthenticated} />}
-        {error && <p id="error-toast">{error.name}: {error.message}</p>}
-    </DateFilteringContext.Provider>);
+    <SearchFilteringContext.Provider value={[searchTerm, setSearchTerm]}>
+        <DateFilteringContext.Provider value={[date, setDate, onCalendarRangeSelected]}>
+            {authenticated ? <AppLayout logo={logo} navbar={navbar} sidebar={sidebar} main={main} />
+                           : <LoginPage setAuthenticated={setAuthenticated} />}
+            {error && <p id="error-toast">{error.name}: {error.message}</p>}
+        </DateFilteringContext.Provider>
+    </SearchFilteringContext.Provider>);
+
 }

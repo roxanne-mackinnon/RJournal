@@ -65,6 +65,12 @@ export class NoteController {
         return result;
     }
 
+    static async findByContentTitleContaining(substring) {
+        return this.notes.filter(note => 
+            note.title.includes(substring) || note.content.includes(substring)
+        );
+    }
+
     static async postNote(newNote) {
         // set ID and creation date for note
         newNote.id = this.idCounter;  
@@ -95,4 +101,5 @@ export class NoteController {
         }
         throw new Error(`Note with id ${noteId} does not exist, cannot DELETE.`);
     }
+
 }

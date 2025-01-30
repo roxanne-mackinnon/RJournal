@@ -1,5 +1,6 @@
 import {useState} from 'react';
 
+import SearchBar from './SearchBar';
 import Calendar from './Calendar';
 import './css/SideBar.css';
 
@@ -19,8 +20,10 @@ export default function SideBar() {
 
     const Item = (id, desc, children) => ({'id': id, 'desc': desc, 'children': children||null});
 
-    const items =[Item('all', 'All Notes'), Item('tags','Tags',[]),
-                  Item('date','Filter By Date', [<Calendar />]), Item('search', 'Search', []), 
+    const items =[Item('all', 'All Notes'),
+                  Item('tags','Tags',[]),
+                  Item('date','Filter By Date', [<Calendar onClick={e => e.stopPropagation()}/>]),
+                  Item('search', 'Search', [<SearchBar onClick={e => e.stopPropagation()}/>]), 
                   Item('trash', 'Trash / Archived Notes')];
     
     // but if one of the sidebar elements has a sublist we still want to expand that...
