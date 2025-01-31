@@ -25,6 +25,9 @@ const notedata = [
     new Note(10,"Happy new Year!!!", "Lots of new goals for this year. I want to get a job as a software engineer, build a top-of-the-line pc, and read 3 textbooks!",
         new Date(2025, 0, 1, 0, 15))
 ];
+
+
+function sleep(seconds) {return new Promise(resolve => setTimeout(resolve, seconds*1000))}
 // singleton class for fetching notes
 export class NoteController {
     
@@ -33,6 +36,7 @@ export class NoteController {
     static idCounter = 0;
 
     static async findById(id) {
+        await sleep(2);
         for (let note of this.notes) {
             if (note.id === id) {
                 return note;
@@ -42,6 +46,7 @@ export class NoteController {
     }
 
     static async findBetweenDates(startDate, endDate) {
+        await sleep(2);
         let result = [];
         for (let note of this.notes) {
             if (note.creationDate >= startDate && note.creationDate <= endDate) {
@@ -52,10 +57,12 @@ export class NoteController {
     }
 
     static async findAll() {
+        await sleep(1);
         return this.notes;
     }
 
     static async findByDate(date) {
+        await sleep(2);
         let result = [];
         for (let note of this.notes) {
             if (isSameDay(note.creationDate, date)) {
@@ -66,12 +73,16 @@ export class NoteController {
     }
 
     static async findByContentTitleContaining(substring) {
+        await sleep(2);
+        let lowerSubstring = substring.toLowerCase();
         return this.notes.filter(note => 
-            note.title.includes(substring) || note.content.includes(substring)
+               note.title.toLowerCase().includes(lowerSubstring)
+            || note.content.toLowerCase().includes(lowerSubstring)
         );
     }
 
     static async postNote(newNote) {
+        await sleep(2);
         // set ID and creation date for note
         newNote.id = this.idCounter;  
         newNote.creationDate = new Date();
@@ -82,6 +93,7 @@ export class NoteController {
     }
 
     static async putNote(note) {
+        await sleep(2);
         for (let i = 0; i < this.notes.length; i++) {
             if (note.id === this.notes[i].id) {
                 this.notes[i].title = note.title;
@@ -93,6 +105,7 @@ export class NoteController {
     }
 
     static async deleteById(noteId) {
+        await sleep(2);
         for (let i = 0; i < this.notes.length; i++) {
             if (this.notes[i].id === noteId) {
                 // remove this index from array

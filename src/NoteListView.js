@@ -55,9 +55,16 @@ function NoteDateView({dateString, ...props}) {
 
 // Given a list of notes, display them grouped by date, only showing the notes
 // within the specified (inclusive) range
-export default function NoteListView({notes, onNoteSelected, onCreateNote}) {
+export default function NoteListView({notes, onNoteSelected, onCreateNote, loading}) {
     // should sort notes by date and display each note in the 'day' section that it appears in 
     // lets just do a quick and dirty algorithm
+
+    if (loading) {
+        return (
+        <div className="note-container">
+            <p>Loading...</p>
+        </div>);
+    }
 
     const groupedNotes = groupNotesByDate(notes);
 

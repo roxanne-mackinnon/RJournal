@@ -36,6 +36,8 @@ export function AppController() {
 
     const [isCreating, setIsCreating] = useState(false);
 
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         if (error === null) return;
 
@@ -50,16 +52,17 @@ export function AppController() {
                                                             setDate(new Date());
                                                         });
         }
-
-        fetchMatchingNotes();
+    
+        setLoading(true);
+        fetchMatchingNotes().then(() => setLoading(false));
     }, [searchTerm]);
 
 
     const onCalendarRangeSelected = useCallback((start, end) => {
         const findBetweenDates = async () => {await NoteController.findBetweenDates(start, end)
                                                 .then(notes => setFilteredNotes(notes))}
-                                                //.catch(err => setError(err))}
-        findBetweenDates();
+        setLoading(true);
+        findBetweenDates().then(() => setLoading(false));
     }, []);
 
     const onNoteEditSubmit = (note) => {
@@ -89,7 +92,8 @@ export function AppController() {
     const logo = <img src={Scroll} alt="RJournal Logo"/>
     const navbar = <NavBar />;
     const sidebar = <SideBar />
-    const main = <NoteListView notes={filteredNotes} onNoteSelected={note => {setActiveNote(note); setIsCreating(false)}} onCreateNote={onCreateNote} />
+    const main = <NoteListView notes={filteredNotes} onNoteSelected={note => {setActiveNote(note); setIsCreating(false)}}
+                               onCreateNote={onCreateNote} loading={loading}/>
 
     return (
     <SearchFilteringContext.Provider value={[searchTerm, setSearchTerm]}>
