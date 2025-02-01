@@ -1,6 +1,7 @@
 import './css/NoteContainer.css';
 import {isSameDay} from './utils/dateutils';
 import {EmptyNote} from './models/Note';
+import Loading from './assets/Loading';
 
 function truncateText(text, nchars) {
     if (text.length <= nchars) {return text;}
@@ -62,7 +63,7 @@ export default function NoteListView({notes, onNoteSelected, onCreateNote, loadi
     if (loading) {
         return (
         <div className="note-container">
-            <p>Loading...</p>
+            <Loading />
         </div>);
     }
 

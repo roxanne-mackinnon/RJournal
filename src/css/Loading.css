@@ -1,0 +1,44 @@
+.spinner {
+    display: block;
+    position: relative;
+    width: 100px;
+    height: 100px;
+    background-color: transparent;
+}
+
+.ball {
+    display: block;
+    position: absolute;
+    background-color: transparent;
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    animation: spin 5s infinite ease-in-out;
+}
+
+.ball::after {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    border-radius: 50%;
+    background-color: var(--white);
+    margin: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(360deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
