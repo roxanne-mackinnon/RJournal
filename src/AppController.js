@@ -45,16 +45,26 @@ export function AppController() {
     }, [error]);
 
     useEffect(() => {
-        const fetchMatchingNotes = async () => {await NoteController.findByContentTitleContaining(searchTerm)
-                                                        .then(notes => {                                                            
-                                                            setFilteredNotes(notes);
-                                                            // also, reset any other filters
-                                                            setDate(new Date());
-                                                        });
-        }
-    
+        // If searchTerm changes, we want to 'cancel' the current request and just execute the next request instead.
+        const controller = new AbortController();
+        // Put a loading spinner while we're fetching
         setLoading(true);
-        fetchMatchingNotes().then(() => setLoading(false));
+        // Fetch the notes, display any error, and abort request if signalled to   
+        NoteController.findByContentTitleContaining(searchTerm, {'signal': controller.signal})
+            .then(notes => {
+                setFilteredNotes(notes);
+                setLoading(false);
+                // clear any date filter
+                setDate(new Date());
+            })
+            .catch (err => {
+                // don't show an error if the request was aborted
+                if (err.name === "AbortError") return;
+                setError(err);
+                console.error(err);
+        });
+
+        return () => controller.abort();
     }, [searchTerm]);
 
 

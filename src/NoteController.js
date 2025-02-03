@@ -2,6 +2,7 @@ import {isSameDay} from './utils/dateutils';
 import {Note} from './models/Note';
 
 const notedata = [
+    new Note(11, "Test Test", "T", new Date(2024, 11, 13)),
     new Note(0, "Gift Ideas", "KitchenAid stand mixer, Needoh Nice Cube, The Essential DTWOF, 'Under the Lemon Tree' by Replica, and a copy of Stardew Valley",
         new Date(2024, 11, 10, 13, 43)),
     new Note(1, "Title", "Content",
@@ -27,7 +28,6 @@ const notedata = [
 ];
 
 
-function sleep(seconds) {return new Promise(resolve => setTimeout(resolve, seconds*1000))}
 // singleton class for fetching notes
 export class NoteController {
     
@@ -35,84 +35,119 @@ export class NoteController {
     static notes = notedata;
     static idCounter = 0;
 
-    static async findById(id) {
-        await sleep(2);
-        for (let note of this.notes) {
-            if (note.id === id) {
-                return note;
+    static findById(id, {signal = null} = {}) {
+        const callback = () => {
+            for (let note of this.notes) {
+                if (note.id === id) {
+                    return note;
+                }
             }
-        }
         throw new Error(`Note with ID ${id} does not exist.`);
+        };
+        
+        return this.#dispatchWithSignal(callback, {'signal': signal});
+    }
+    
+    static findAll({signal = null} = {}) {
+        return this.#dispatchWithSignal(() => this.notes, {'signal': signal});
     }
 
-    static async findBetweenDates(startDate, endDate) {
-        await sleep(2);
-        let result = [];
-        for (let note of this.notes) {
-            if (note.creationDate >= startDate && note.creationDate <= endDate) {
-                result.push(note);
-            }
+    // NOT THREADSAFE
+    static postNote(newNote, {signal = null} = {}) {
+        const callback = () => {
+            // set ID and creation date for note
+            newNote.id = this.idCounter;  
+            newNote.creationDate = new Date();
+
+            // not threadsafe
+            this.idCounter = this.idCounter + 1;
+            this.notes.push(newNote);
+            return newNote;
         }
-        return result;
+
+        return this.#dispatchWithSignal(callback, {'signal': signal});
     }
 
-    static async findAll() {
-        await sleep(1);
-        return this.notes;
-    }
-
-    static async findByDate(date) {
-        await sleep(2);
-        let result = [];
-        for (let note of this.notes) {
-            if (isSameDay(note.creationDate, date)) {
-                result.push(note);
+    static putNote(note, {signal = null} = {}) {
+        const callback = () => {
+            for (let i = 0; i < this.notes.length; i++) {
+                if (note.id === this.notes[i].id) {
+                    this.notes[i].title = note.title;
+                    this.notes[i].content = note.content;                
+                    return this.notes[i];
+                }
             }
+            throw new Error(`Note with id ${note.id} does not exist, must use PUT with existing note id.`);
         }
-        return result;
+
+        return this.#dispatchWithSignal(callback, {'signal': signal});
     }
 
-    static async findByContentTitleContaining(substring) {
-        await sleep(2);
-        let lowerSubstring = substring.toLowerCase();
-        return this.notes.filter(note => 
-               note.title.toLowerCase().includes(lowerSubstring)
-            || note.content.toLowerCase().includes(lowerSubstring)
-        );
-    }
-
-    static async postNote(newNote) {
-        await sleep(2);
-        // set ID and creation date for note
-        newNote.id = this.idCounter;  
-        newNote.creationDate = new Date();
-
-        this.idCounter = this.idCounter + 1;
-        this.notes.push(newNote);
-        return newNote;
-    }
-
-    static async putNote(note) {
-        await sleep(2);
-        for (let i = 0; i < this.notes.length; i++) {
-            if (note.id === this.notes[i].id) {
-                this.notes[i].title = note.title;
-                this.notes[i].content = note.content;                
-                return this.notes[i];
+    static deleteById(noteId, {signal = null} = {}) {
+        const callback = () => {
+            for (let i = 0; i < this.notes.length; i++) {
+                if (this.notes[i].id === noteId) {
+                    // remove this index from array
+                    this.notes.splice(i, 1);
+                    return;
+                }
             }
-        }
-        throw new Error(`Note with id ${note.id} does not exist, must use PUT with existing note id.`);
+            throw new Error(`Note with id ${noteId} does not exist, cannot DELETE.`);
+        };
+
+        return this.#dispatchWithSignal(callback, {'signal': signal});
     }
 
-    static async deleteById(noteId) {
-        await sleep(2);
-        for (let i = 0; i < this.notes.length; i++) {
-            if (this.notes[i].id === noteId) {
-                // remove this index from array
-                this.notes.splice(i, 1);
+    static findByDate(date, {signal = null} = {}) {
+        const callback = () => {
+            let result = [];
+            for (let note of this.notes) {
+                if (isSameDay(note.creationDate, date)) {
+                    result.push(note);
+                }
             }
+            return result;
         }
-        throw new Error(`Note with id ${noteId} does not exist, cannot DELETE.`);
+        return this.#dispatchWithSignal(callback, {'signal': signal});
     }
 
+    static findBetweenDates(startDate, endDate, {signal = null} = {}) {
+        const callback = () => {
+            let result = [];
+            for (let note of this.notes) {
+                if (note.creationDate >= startDate && note.creationDate <= endDate) {
+                    result.push(note);
+                }
+            }
+            return result;
+        };
+
+        return this.#dispatchWithSignal(callback, {'signal': signal});
+    }
+
+    static findByContentTitleContaining(substring, {signal = null} = {}) {
+        const callback = () => {
+            let lowerSubstring = substring.toLowerCase();
+            return this.notes.filter(note => 
+                note.title.toLowerCase().includes(lowerSubstring)
+                || note.content.toLowerCase().includes(lowerSubstring)
+            );
+        }
+        return this.#dispatchWithSignal(callback, {'signal': signal});
+    }
+
+    static #dispatchWithSignal(callback, {signal} = {}) {
+        console.log(signal && 'signal present');
+        // if signal is not present, should still work
+        return new Promise((resolve, reject) => {
+            if (signal?.aborted) reject(signal.reason);
+
+            let timeout = setTimeout(() => resolve(callback()), 2000);
+
+            signal?.addEventListener('abort', () => {
+                clearTimeout(timeout);
+                reject(signal.reason);
+            })            
+        });
+    }
 }

@@ -1,6 +1,5 @@
 import './css/NoteContainer.css';
 import {isSameDay} from './utils/dateutils';
-import {EmptyNote} from './models/Note';
 import Loading from './assets/Loading';
 
 function truncateText(text, nchars) {
@@ -12,7 +11,7 @@ function truncateText(text, nchars) {
 // Return a result of the form [{creationDate: <date>, notes:[...]}, ...]
 function groupNotesByDate(notes) {
     if (notes.length === 0) return [];
-    let sortedNotes = notes.toSorted();
+    let sortedNotes = notes.toSorted((n1, n2) => n1.creationDate - n2.creationDate);
 
     let lastDate = sortedNotes[0].creationDate;
     let result = [{'creationDate': lastDate, 'notes': []}];
