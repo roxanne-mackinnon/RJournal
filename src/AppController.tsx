@@ -8,35 +8,36 @@ import {DateFilteringContext, SearchFilteringContext} from './Contexts';
 import NoteListView from './NoteListView';
 import {NoteController} from './NoteController';
 import LoginPage from './LoginPage';
-import {EmptyNote} from './models/Note';
+import {Note, EmptyNote} from './models/Note';
 import AppLayout from './AppLayout';
-import Scroll from './assets/Scroll.svg';
 import NavBar from './NavBar';
 import SideBar from './SideBar';
 import './css/AppController.css';
+
+const scroll = require('./assets/Scroll.svg') as string;
 
 // container for the note list, calendar, and note editor
 export function AppController() {
 
     // Notes that the notelistview should display, to be filtered (either by date or some other means like text search)
-    const [filteredNotes, setFilteredNotes] = useState([]);    
+    const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);    
     // The note that has been clicked for editing/viewing, or null.
-    const [activeNote, setActiveNote] = useState(null);
+    const [activeNote, setActiveNote] = useState<Note|null>(null);
     // If user is authenticated or not
-    const [authenticated, setAuthenticated] = useState(false);
+    const [authenticated, setAuthenticated] = useState<boolean>(false);
     // Current error. After being set to an error state, useEffect will automatically clear it
     // after a short timeout
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<Error|null>(null);
 
     /* States for filtering */
     // Current date that should be used as the basis for the calendar
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState<Date>(new Date());
     // Search term to filter notes by
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState<string>("");
 
-    const [isCreating, setIsCreating] = useState(false);
+    const [isCreating, setIsCreating] = useState<boolean>(false);
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (error === null) return;
@@ -68,14 +69,14 @@ export function AppController() {
     }, [searchTerm]);
 
 
-    const onCalendarRangeSelected = useCallback((start, end) => {
+    const onCalendarRangeSelected = useCallback((start: Date, end: Date) => {
         const findBetweenDates = async () => {await NoteController.findBetweenDates(start, end)
                                                 .then(notes => setFilteredNotes(notes))}
         setLoading(true);
         findBetweenDates().then(() => setLoading(false));
     }, []);
 
-    const onNoteEditSubmit = (note) => {
+    const onNoteEditSubmit = (note: Note) => {
         // if creating a new note, we should 'post', otherwise, put.
         let newNote;
         if (isCreating) {
@@ -96,10 +97,10 @@ export function AppController() {
     const onCreateNote = () => {
         // need to save some state to remember that we are 'creating' instead of 'editing'
         setIsCreating(true);
-        setActiveNote(new EmptyNote());
+        setActiveNote(EmptyNote());
     }
 
-    const logo = <img src={Scroll} alt="RJournal Logo"/>
+    const logo = <img src={scroll} alt="RJournal Logo"/>
     const navbar = <NavBar />;
     const sidebar = <SideBar />
     const main = <NoteListView notes={filteredNotes} onNoteSelected={note => {setActiveNote(note); setIsCreating(false)}}

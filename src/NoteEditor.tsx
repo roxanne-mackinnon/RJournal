@@ -1,6 +1,13 @@
 import './css/NoteEditor.css';
+import { Note } from './models/Note';
 
-export default function NoteEditor({note, setNote, onSubmit, onCancel}) {
+interface NoteEditorProps {
+    note: Note;
+    setNote: (n: Note) => void;
+    onSubmit: (n:Note) => void;
+    onCancel: () => void;
+}
+export default function NoteEditor({note, setNote, onSubmit, onCancel} : NoteEditorProps) {
     // should i just edit the note directly using setNote or use 'note' as a starter? i think the latter because what if we decide to cancel.
     // this should work for both new notes and editing old notes...
     

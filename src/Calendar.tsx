@@ -1,15 +1,20 @@
 import './css/Calendar.css';
 import {datesToDisplay, MONTHS} from './utils/dateutils';
 import {useEffect, useContext} from 'react';
-import {DateFilteringContext} from './Contexts';
+import {DateFilteringContext, DateFilteringContextParams} from './Contexts';
+
 
 //  Calendar component for displaying ranges of dates, old-school calendar style.
 //  'onRangeSelected': callback function of two parameters, start date and end date (exclusive)
 //    these dates represent the dates which the parent should display, representing either that the
 //    month has changed or the user has click-and-dragged over a set of continuous days
-export default function Calendar(props) {
+export default function Calendar() {
 
-    const [date, setDate, onRangeSelected] = useContext(DateFilteringContext);
+
+    const dateFilterParams = useContext<DateFilteringContextParams|null>(DateFilteringContext);
+    if (dateFilterParams===null) throw new Error("DateFilteringContextParams cannot be null.");
+
+    const [date, setDate, onRangeSelected] = dateFilterParams;
 
     const days = datesToDisplay(date);
 
@@ -24,19 +29,16 @@ export default function Calendar(props) {
         // eslint-disable-next-line
     }, [date]);
     
-    const decrementMonth = e => {
-        e.stopPropagation();
+    const decrementMonth = () => {
         setDate(new Date(date.getFullYear(), date.getMonth() - 1));
     }
 
-    const incrementMonth = e => {
-        e.stopPropagation();
+    const incrementMonth = () => {
         setDate(new Date(date.getFullYear(), date.getMonth() + 1));
     }
 
-    const {classNames, ...restProp} = props;
     return (
-        <div className={`calendar ${classNames}`} {...restProp}>
+        <div className={`calendar`}>
             <p>{date.getFullYear()}</p>
             <div className="month-selector">
                 <span onClick={decrementMonth}>Left</span>

@@ -1,11 +1,15 @@
 import {useState} from 'react';
 import './css/LoginPage.css';
-export default function LoginPage({setAuthenticated}) {
 
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+interface LoginPageProps {
+    setAuthenticated: (a: boolean) => any;
+}
+export default function LoginPage({ setAuthenticated } : LoginPageProps) {
 
-    const attemptLogin = () => {
+    const [username, setUsername] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    const attemptLogin = (username: string, password: string) => {
         console.log("Attempting login...")
         setAuthenticated(true);
     };

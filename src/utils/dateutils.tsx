@@ -1,17 +1,17 @@
 export const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-export function isSameDay(d1, d2) {
-    return (d1.getYear() === d2.getYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate())
+export function isSameDay(d1: Date, d2: Date) {
+    return (d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate())
 }
 
-export function dateOfPrecedingSunday(date) {
+export function dateOfPrecedingSunday(date: Date) {
     let copyDate = new Date(date);
     copyDate.setDate(1);
     copyDate.setDate(1 - copyDate.getDay());
     return copyDate.getDate();
 }
 
-export function dateOfLastSaturday(date) {
+export function dateOfLastSaturday(date: Date) {
     let copyDate = new Date(date);
     copyDate.setMonth(copyDate.getMonth() + 1);
     copyDate.setDate(0);
@@ -19,13 +19,13 @@ export function dateOfLastSaturday(date) {
     return copyDate.getDate();
 }
 
-export function daysInMonth(date) {
-    let copyDate = new Date(date.getYear(), date.getMonth() + 1);
+export function daysInMonth(date: Date) {
+    let copyDate = new Date(date.getFullYear(), date.getMonth() + 1);
     copyDate.setDate(0);
     return copyDate.getDate();
 }
 
-export function daysInLastMonth(date) {
+export function daysInLastMonth(date: Date) {
     let copyDate = new Date(date);
     copyDate.setDate(0);
     return copyDate.getDate();    
@@ -33,15 +33,15 @@ export function daysInLastMonth(date) {
 
 // date is between start and end, inclusive
 // ASSUMES start < end
-export function dateIsBetween(date, start, end) {
+export function dateIsBetween(date: Date, start: Date, end: Date) {
     return date >= start && date <= end;
 }
 
-export function datesToDisplay(date) {
+export function datesToDisplay(date: Date) {
     let result = [];
     let precedingSunday = dateOfPrecedingSunday(date);
     let lastSaturday = dateOfLastSaturday(date);
-    let lastMonthDays = daysInMonth(new Date(date.getYear(), date.getMonth() - 1));
+    let lastMonthDays = daysInMonth(new Date(date.getFullYear(), date.getMonth() - 1));
     let currMonthDays = daysInMonth(date);
 
     // if the preceding sunday is the first of the month, we should skip adding days from last month

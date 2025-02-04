@@ -1,8 +1,9 @@
 import {isSameDay} from './utils/dateutils';
 import {Note} from './models/Note';
 
-const notedata = [
-    new Note(11, "Test Test", "T", new Date(2024, 11, 13)),
+const notedata : Note[] = [
+    new Note(11, "Test Test", "T",
+        new Date(2024, 11, 13)),
     new Note(0, "Gift Ideas", "KitchenAid stand mixer, Needoh Nice Cube, The Essential DTWOF, 'Under the Lemon Tree' by Replica, and a copy of Stardew Valley",
         new Date(2024, 11, 10, 13, 43)),
     new Note(1, "Title", "Content",
@@ -28,6 +29,8 @@ const notedata = [
 ];
 
 
+type SignalParam = {signal: AbortSignal | null};
+
 // singleton class for fetching notes
 export class NoteController {
     
@@ -35,25 +38,25 @@ export class NoteController {
     static notes = notedata;
     static idCounter = 0;
 
-    static findById(id, {signal = null} = {}) {
+    static findById(id: number, signal: SignalParam = {signal: null}) : Promise<Note> {
         const callback = () => {
             for (let note of this.notes) {
                 if (note.id === id) {
                     return note;
-                }
+                }   
             }
-        throw new Error(`Note with ID ${id} does not exist.`);
+            throw new Error(`Note with ID ${id} does not exist.`);
         };
         
-        return this.#dispatchWithSignal(callback, {'signal': signal});
+        return this.#dispatchWithSignal(callback, signal);
     }
     
-    static findAll({signal = null} = {}) {
-        return this.#dispatchWithSignal(() => this.notes, {'signal': signal});
+    static findAll(signal: SignalParam = {signal: null}) : Promise<Note[]> {
+        return this.#dispatchWithSignal(() => this.notes, signal);
     }
 
     // NOT THREADSAFE
-    static postNote(newNote, {signal = null} = {}) {
+    static postNote(newNote: Note, signal: SignalParam = {signal: null}) : Promise<Note> {
         const callback = () => {
             // set ID and creation date for note
             newNote.id = this.idCounter;  
@@ -65,10 +68,10 @@ export class NoteController {
             return newNote;
         }
 
-        return this.#dispatchWithSignal(callback, {'signal': signal});
+        return this.#dispatchWithSignal(callback, signal);
     }
 
-    static putNote(note, {signal = null} = {}) {
+    static putNote(note: Note, signal: SignalParam = {signal: null}) : Promise<Note> {
         const callback = () => {
             for (let i = 0; i < this.notes.length; i++) {
                 if (note.id === this.notes[i].id) {
@@ -80,10 +83,10 @@ export class NoteController {
             throw new Error(`Note with id ${note.id} does not exist, must use PUT with existing note id.`);
         }
 
-        return this.#dispatchWithSignal(callback, {'signal': signal});
+        return this.#dispatchWithSignal(callback, signal);
     }
 
-    static deleteById(noteId, {signal = null} = {}) {
+    static deleteById(noteId: number, signal: SignalParam = {signal: null}) {
         const callback = () => {
             for (let i = 0; i < this.notes.length; i++) {
                 if (this.notes[i].id === noteId) {
@@ -95,10 +98,10 @@ export class NoteController {
             throw new Error(`Note with id ${noteId} does not exist, cannot DELETE.`);
         };
 
-        return this.#dispatchWithSignal(callback, {'signal': signal});
+        return this.#dispatchWithSignal(callback, signal);
     }
 
-    static findByDate(date, {signal = null} = {}) {
+    static findByDate(date: Date, signal: SignalParam = {signal: null}) : Promise<Note[]>{
         const callback = () => {
             let result = [];
             for (let note of this.notes) {
@@ -108,10 +111,10 @@ export class NoteController {
             }
             return result;
         }
-        return this.#dispatchWithSignal(callback, {'signal': signal});
+        return this.#dispatchWithSignal(callback, signal);
     }
 
-    static findBetweenDates(startDate, endDate, {signal = null} = {}) {
+    static findBetweenDates(startDate: Date, endDate: Date, signal: SignalParam = {signal: null}) : Promise<Note[]>{
         const callback = () => {
             let result = [];
             for (let note of this.notes) {
@@ -122,21 +125,21 @@ export class NoteController {
             return result;
         };
 
-        return this.#dispatchWithSignal(callback, {'signal': signal});
+        return this.#dispatchWithSignal(callback, signal);
     }
 
-    static findByContentTitleContaining(substring, {signal = null} = {}) {
+    static findByContentTitleContaining(substring: string, signal: SignalParam = {signal: null}) : Promise<Note[]>{
         const callback = () => {
             let lowerSubstring = substring.toLowerCase();
-            return this.notes.filter(note => 
+           return this.notes.filter(note => 
                 note.title.toLowerCase().includes(lowerSubstring)
                 || note.content.toLowerCase().includes(lowerSubstring)
             );
         }
-        return this.#dispatchWithSignal(callback, {'signal': signal});
+        return this.#dispatchWithSignal(callback, signal);
     }
 
-    static #dispatchWithSignal(callback, {signal} = {}) {
+    static #dispatchWithSignal<T>(callback: () => T, {signal} : SignalParam = {signal:null}) : Promise<T>{
         console.log(signal && 'signal present');
         // if signal is not present, should still work
         return new Promise((resolve, reject) => {
