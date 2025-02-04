@@ -12,9 +12,8 @@ import {Note, EmptyNote} from './models/Note';
 import AppLayout from './AppLayout';
 import NavBar from './NavBar';
 import SideBar from './SideBar';
+import Scroll from './assets/Scroll.svg';
 import './css/AppController.css';
-
-const scroll = require('./assets/Scroll.svg') as string;
 
 // container for the note list, calendar, and note editor
 export function AppController() {
@@ -100,7 +99,7 @@ export function AppController() {
         setActiveNote(EmptyNote());
     }
 
-    const logo = <img src={scroll} alt="RJournal Logo"/>
+    const logo = <img src={Scroll} alt={"RJournal Scroll Icon"}/>;
     const navbar = <NavBar />;
     const sidebar = <SideBar />
     const main = <NoteListView notes={filteredNotes} onNoteSelected={note => {setActiveNote(note); setIsCreating(false)}}
