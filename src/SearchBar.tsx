@@ -1,4 +1,4 @@
-import {ChangeEvent, useContext} from 'react';
+import {useEffect, useContext} from 'react';
 import { SearchFilteringContext, SearchFilteringContextParams } from './Contexts';
 import './css/SearchBar.css';
 
@@ -8,7 +8,13 @@ export default function SearchBar() {
 
     const [searchTerm, setSearchTerm] = searchFilterParams;
 
-    return (<input className="search-bar" type="text" value={searchTerm}
-                onChange={(e: {target: HTMLInputElement}) => setSearchTerm(e.target.value)}>
-            </input>);
+    // reset search term if component is unmounted
+    useEffect(() => {
+        return () => setSearchTerm("");
+    }, [])
+
+    return (
+    <input className="search-bar" type="text" value={searchTerm}
+        onChange={(e: {target: HTMLInputElement}) => setSearchTerm(e.target.value)}>
+    </input>);
 }
