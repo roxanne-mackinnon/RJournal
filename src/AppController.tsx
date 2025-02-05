@@ -15,6 +15,34 @@ import SideBar from './SideBar';
 import Scroll from './assets/Scroll.svg';
 import './css/AppController.css';
 
+// use a NoteController method for filtering notes, which cancels a request
+// if the query parameters (in the dependency array) are changed before the request returns
+// 'callback' should be a callback of the form (signal) => NoteController.findByFilter(filterParams, {signal: signal})
+// if any dependencies are null, no query is executed.
+function useCancellableFilter(callback: (s: AbortSignal) => Promise<Note[]>, dependencies: any[],
+                                setLoading: (a: boolean) => void, setNotes : (a: Note[]) => void, setError : (a: Error) => void) {
+    useEffect(() => {
+        if (dependencies.includes(null)) return;
+        const controller = new AbortController();
+
+        setLoading(true);
+        
+        // call method through currying
+        callback(controller.signal)
+            .then(notes => {
+                setLoading(false);
+                setNotes(notes);
+            })
+            .catch(err => {
+                if (err.name === "AbortError") return;
+                setError(err);
+                console.error(err);
+            });
+
+        return () => controller.abort();
+    }, dependencies);
+}
+
 // container for the note list, calendar, and note editor
 export function AppController() {
 
@@ -30,13 +58,13 @@ export function AppController() {
 
     /* States for filtering */
     // Current date that should be used as the basis for the calendar
-    const [date, setDate] = useState<Date>(new Date());
+    const [[rangeStart, rangeEnd], setDateRange] = useState<[Date|null, Date|null]>([null, null]);
     // Search term to filter notes by
     const [searchTerm, setSearchTerm] = useState<string>("");
 
-    const [isCreating, setIsCreating] = useState<boolean>(false);
-
     const [loading, setLoading] = useState<boolean>(false);
+
+    const isCreating = activeNote && activeNote.id !== null;
 
     useEffect(() => {
         if (error === null) return;
@@ -44,70 +72,23 @@ export function AppController() {
         setTimeout(() => setError(null), 5000);
     }, [error]);
 
-    useEffect(() => {
-        // If searchTerm changes, we want to 'cancel' the current request and just execute the next request instead.
-        const controller = new AbortController();
-        // Put a loading spinner while we're fetching
-        setLoading(true);
-        // Fetch the notes, display any error, and abort request if signalled to   
-        NoteController.findByContentTitleContaining(searchTerm, {'signal': controller.signal})
-            .then(notes => {
-                setFilteredNotes(notes);
-                setLoading(false);
-                // clear any date filter
-                setDate(new Date());
-            })
-            .catch (err => {
-                // don't show an error if the request was aborted
-                if (err.name === "AbortError") return;
-                setError(err);
-                console.error(err);
-        });
+    useCancellableFilter(signal => 
+        NoteController.findByContentTitleContaining(searchTerm, {signal: signal})
+    , [searchTerm], setLoading, setFilteredNotes, setError);
 
-        return () => controller.abort();
-    }, [searchTerm]);
-
-
-    const onCalendarRangeSelected = useCallback((start: Date, end: Date) => {
-        const findBetweenDates = async () => {await NoteController.findBetweenDates(start, end)
-                                                .then(notes => setFilteredNotes(notes))}
-        setLoading(true);
-        findBetweenDates().then(() => setLoading(false));
-    }, []);
-
-    const onNoteEditSubmit = (note: Note) => {
-        // if creating a new note, we should 'post', otherwise, put.
-        let newNote;
-        if (isCreating) {
-            newNote = NoteController.postNote(note);
-        }
-        else {
-            newNote = NoteController.putNote(note);
-        }
-
-        const alterOrCreateNote = async () => {await newNote
-                                                .then(n => setFilteredNotes([...filteredNotes, n]))
-                                                .catch(err => setError(err))};
-        alterOrCreateNote().then(resp => console.log(resp));
-        setActiveNote(null);
-        setIsCreating(false);
-    }
-
-    const onCreateNote = () => {
-        // need to save some state to remember that we are 'creating' instead of 'editing'
-        setIsCreating(true);
-        setActiveNote(EmptyNote());
-    }
+    useCancellableFilter(signal => 
+        NoteController.findBetweenDates(rangeStart, rangeEnd, {signal: signal})
+    , [rangeStart, rangeEnd], setLoading, setFilteredNotes, setError);
 
     const logo = <img src={Scroll} alt={"RJournal Scroll Icon"}/>;
     const navbar = <NavBar />;
     const sidebar = <SideBar />
-    const main = <NoteListView notes={filteredNotes} onNoteSelected={note => {setActiveNote(note); setIsCreating(false)}}
-                               onCreateNote={onCreateNote} loading={loading}/>
+    const main = <NoteListView notes={filteredNotes} onNoteSelected={note => setActiveNote(note)}
+                               onCreateNote={() => setActiveNote(EmptyNote())} loading={loading}/>
 
     return (
     <SearchFilteringContext.Provider value={[searchTerm, setSearchTerm]}>
-        <DateFilteringContext.Provider value={[date, setDate, onCalendarRangeSelected]}>
+        <DateFilteringContext.Provider value={[rangeStart, rangeEnd, setDateRange]}>
             {authenticated ? <AppLayout logo={logo} navbar={navbar} sidebar={sidebar} main={main} />
                            : <LoginPage setAuthenticated={setAuthenticated} />}
             {error && <p id="error-toast">{error.name}: {error.message}</p>}

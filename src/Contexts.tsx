@@ -1,9 +1,9 @@
 import {createContext} from 'react';
 
 export type DateFilteringContextParams =
-    [Date,
-    (date: Date) => void,
-    (start: Date, end: Date) => void];
+    [Date|null,
+     Date|null,
+    ([start, end] : [Date|null,Date|null]) => void];
 
 export type SearchFilteringContextParams =
     [string,

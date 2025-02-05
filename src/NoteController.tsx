@@ -114,7 +114,8 @@ export class NoteController {
         return this.#dispatchWithSignal(callback, signal);
     }
 
-    static findBetweenDates(startDate: Date, endDate: Date, signal: SignalParam = {signal: null}) : Promise<Note[]>{
+    static findBetweenDates(startDate: Date|null, endDate: Date|null, signal: SignalParam = {signal: null}) : Promise<Note[]>{
+        if (startDate === null || endDate === null) throw new Error("Empty Date Range.");
         const callback = () => {
             let result = [];
             for (let note of this.notes) {
@@ -140,12 +141,11 @@ export class NoteController {
     }
 
     static #dispatchWithSignal<T>(callback: () => T, {signal} : SignalParam = {signal:null}) : Promise<T>{
-        console.log(signal && 'signal present');
         // if signal is not present, should still work
         return new Promise((resolve, reject) => {
             if (signal?.aborted) reject(signal.reason);
 
-            let timeout = setTimeout(() => resolve(callback()), 2000);
+            let timeout = setTimeout(() => resolve(callback()), 700);
 
             signal?.addEventListener('abort', () => {
                 clearTimeout(timeout);

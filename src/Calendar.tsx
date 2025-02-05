@@ -1,6 +1,6 @@
 import './css/Calendar.css';
 import {datesToDisplay, MONTHS} from './utils/dateutils';
-import {useEffect, useContext} from 'react';
+import {useState, useEffect, useContext} from 'react';
 import {DateFilteringContext, DateFilteringContextParams} from './Contexts';
 
 
@@ -14,7 +14,9 @@ export default function Calendar() {
     const dateFilterParams = useContext<DateFilteringContextParams|null>(DateFilteringContext);
     if (dateFilterParams===null) throw new Error("DateFilteringContextParams cannot be null.");
 
-    const [date, setDate, onRangeSelected] = dateFilterParams;
+    const [startDate, endDate, setDateRange] = dateFilterParams;
+
+    const [date, setDate] = useState<Date>(new Date());
 
     const days = datesToDisplay(date);
 
@@ -23,7 +25,7 @@ export default function Calendar() {
         // Should do between 12:00AM on first of month until just before 12:00AM of start of next month.
         const firstOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
         const lastOfMonth = new Date(date.getFullYear(), date.getMonth()+1, 1, 0, 0, -1);
-        onRangeSelected(firstOfMonth, lastOfMonth);
+        setDateRange([firstOfMonth, lastOfMonth]);
 
         // can change this code later to account for different types of selecting ranges e.g. selecting multiple months or click-n-dragging over a range of dates
         // eslint-disable-next-line
