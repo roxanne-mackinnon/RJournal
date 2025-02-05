@@ -3,11 +3,12 @@
 // for example, lets say i click on a note, i then want to display the note on the right and give the option to edit or delete it.
 // it will control the state
 
-import {useState, useEffect, useCallback} from 'react';
-import {DateFilteringContext, SearchFilteringContext} from './Contexts';
+import {useState, useEffect} from 'react';
+import {DateFilteringContext, NoteEditingContext, SearchFilteringContext} from './Contexts';
 import NoteListView from './NoteListView';
 import {NoteController} from './NoteController';
 import LoginPage from './LoginPage';
+import NoteEditor from './NoteEditor';
 import {Note, EmptyNote} from './models/Note';
 import AppLayout from './AppLayout';
 import NavBar from './NavBar';
@@ -19,8 +20,10 @@ import './css/AppController.css';
 // if the query parameters (in the dependency array) are changed before the request returns
 // 'callback' should be a callback of the form (signal) => NoteController.findByFilter(filterParams, {signal: signal})
 // if any dependencies are null, no query is executed.
-function useCancellableFilter(callback: (s: AbortSignal) => Promise<Note[]>, dependencies: any[],
-                                setLoading: (a: boolean) => void, setNotes : (a: Note[]) => void, setError : (a: Error) => void) {
+function useCancellableRequest(callback: (s: AbortSignal) => Promise<Note[]>, dependencies: any[],
+                                setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+                                setNotes : React.Dispatch<React.SetStateAction<Note[]>>,
+                                setError : React.Dispatch<React.SetStateAction<Error|null>>) {
     useEffect(() => {
         if (dependencies.includes(null)) return;
         const controller = new AbortController();
@@ -36,7 +39,6 @@ function useCancellableFilter(callback: (s: AbortSignal) => Promise<Note[]>, dep
             .catch(err => {
                 if (err.name === "AbortError") return;
                 setError(err);
-                console.error(err);
             });
 
         return () => controller.abort();
@@ -49,7 +51,7 @@ export function AppController() {
     // Notes that the notelistview should display, to be filtered (either by date or some other means like text search)
     const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);    
     // The note that has been clicked for editing/viewing, or null.
-    const [activeNote, setActiveNote] = useState<Note|null>(null);
+    const [activeNote, setActiveNote] = useState<Note|null>(EmptyNote());
     // If user is authenticated or not
     const [authenticated, setAuthenticated] = useState<boolean>(false);
     // Current error. After being set to an error state, useEffect will automatically clear it
@@ -64,21 +66,47 @@ export function AppController() {
 
     const [loading, setLoading] = useState<boolean>(false);
 
-    const isCreating = activeNote && activeNote.id !== null;
+    const isEditing = activeNote!==null ? true : false;
 
     useEffect(() => {
         if (error === null) return;
-
+        console.log(error);
         setTimeout(() => setError(null), 5000);
     }, [error]);
 
-    useCancellableFilter(signal => 
+    useCancellableRequest(signal => 
         NoteController.findByContentTitleContaining(searchTerm, {signal: signal})
     , [searchTerm], setLoading, setFilteredNotes, setError);
 
-    useCancellableFilter(signal => 
+    useCancellableRequest(signal => 
         NoteController.findBetweenDates(rangeStart, rangeEnd, {signal: signal})
     , [rangeStart, rangeEnd], setLoading, setFilteredNotes, setError);
+
+    const onNoteEditSubmit = (note : Note) : void => {
+        setLoading(true);
+
+        let method : (param: Note) => Promise<Note>;
+        // if note ID does not exist, we need to POST, otherwise PUT
+        if (note.id === null) {
+            method = NoteController.postNote;
+        }
+        else {
+            method = NoteController.putNote;
+        }
+
+        method(note)
+            .then(note => {
+                setLoading(false);
+                // need to refresh list of notes, not sure how to do this yet
+                // or, possibly we should just return to the current search filter.
+                // either way, we should establish a 'baseline' or 'default' note display and
+                // how to return to that
+                setActiveNote(null);
+            })
+            .catch(err => {
+                setError(err);
+            })
+    }
 
     const logo = <img src={Scroll} alt={"RJournal Scroll Icon"}/>;
     const navbar = <NavBar />;
@@ -89,9 +117,13 @@ export function AppController() {
     return (
     <SearchFilteringContext.Provider value={[searchTerm, setSearchTerm]}>
         <DateFilteringContext.Provider value={[rangeStart, rangeEnd, setDateRange]}>
-            {authenticated ? <AppLayout logo={logo} navbar={navbar} sidebar={sidebar} main={main} />
-                           : <LoginPage setAuthenticated={setAuthenticated} />}
-            {error && <p id="error-toast">{error.name}: {error.message}</p>}
+            <NoteEditingContext.Provider value={[activeNote, setActiveNote, onNoteEditSubmit]}>
+                {authenticated
+                    ? <AppLayout logo={logo} navbar={navbar} sidebar={sidebar} main={main} />
+                    : <LoginPage setAuthenticated={setAuthenticated} />}
+                {error && <p id="error-toast">{error.name}: {error.message}</p>}
+                {isEditing && <NoteEditor note={activeNote} setNote={setActiveNote} onSubmit={onNoteEditSubmit} onCancel={() => {}} />}
+            </NoteEditingContext.Provider>
         </DateFilteringContext.Provider>
     </SearchFilteringContext.Provider>);
 
