@@ -26,7 +26,7 @@ export default function SideBar() {
 
     const isClicked = (item: Item) : boolean => clicked ? item.id===clicked.id : false;
 
-    const clickedStyle = {'background-color': 'var(--white)', 'color': 'var(--black)'};
+    const clickedStyle = {backgroundColor: 'var(--white)', color: 'var(--black)'};
 
     const items =[Item('all', 'All Notes'),
                   Item('tags','Tags',[]),

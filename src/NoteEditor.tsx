@@ -3,7 +3,7 @@ import { Note } from './models/Note';
 
 interface NoteEditorProps {
     note: Note|null;
-    setNote: (n: Note) => void;
+    setNote: React.Dispatch<React.SetStateAction<Note|null>>;
     onSubmit: (n:Note) => void;
     onCancel: () => void;
 }
