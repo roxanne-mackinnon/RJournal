@@ -5,7 +5,7 @@
 
 import {useState, useEffect} from 'react';
 import {DateFilteringContext, NoteEditingContext, SearchFilteringContext} from './Contexts';
-import NoteListView from './NoteListView';
+import NoteContainer from './NoteContainer';
 import {NoteController} from './NoteController';
 import LoginPage from './LoginPage';
 import NoteEditor from './NoteEditor';
@@ -114,7 +114,7 @@ export function AppController() {
     const logo = <img src={Scroll} alt={"RJournal Scroll Icon"}/>;
     const navbar = <NavBar />;
     const sidebar = <SideBar />
-    const main = <NoteListView notes={filteredNotes} onNoteSelected={note => setActiveNote(note)}
+    const main = <NoteContainer notes={filteredNotes} onNoteSelected={note => setActiveNote(note)}
                                onCreateNote={() => setActiveNote(EmptyNote())} loading={loading}/>
 
     return (

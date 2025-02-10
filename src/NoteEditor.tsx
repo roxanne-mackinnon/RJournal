@@ -18,8 +18,10 @@ export default function NoteEditor({note, setNote, onSubmit, onCancel} : NoteEdi
         <div className="note-editor" onClick={e => e.stopPropagation()}>
             <input className="NE-title" id="noteTitle" type="text" value={note.title} onChange={e => setNote({...note, 'title': e.target.value})}></input>
             <textarea className="NE-content"id="noteContent" value={note.content} onChange={e => setNote({...note, 'content': e.target.value})}></textarea>
-            <button onClick={() => onSubmit(note)}>Submit</button>
-            <button onClick={() => onCancel()}>Cancel</button>
+            <span>
+                <button onClick={() => onSubmit(note)}>Submit</button>
+                <button onClick={() => onCancel()}>Cancel</button>
+            </span>
         </div>
     </div>);
 }
