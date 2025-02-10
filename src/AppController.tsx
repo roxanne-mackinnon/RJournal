@@ -16,6 +16,8 @@ import SideBar from './SideBar';
 import Scroll from './assets/Scroll.svg';
 import './css/AppController.css';
 
+const noteController = new NoteController();
+
 // use a NoteController method for filtering notes, which cancels a request
 // if the query parameters (in the dependency array) are changed before the request returns
 // 'callback' should be a callback of the form (signal) => NoteController.findByFilter(filterParams, {signal: signal})
@@ -51,7 +53,7 @@ export function AppController() {
     // Notes that the notelistview should display, to be filtered (either by date or some other means like text search)
     const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);    
     // The note that has been clicked for editing/viewing, or null.
-    const [activeNote, setActiveNote] = useState<Note|null>(EmptyNote());
+    const [activeNote, setActiveNote] = useState<Note|null>(null);
     // If user is authenticated or not
     const [authenticated, setAuthenticated] = useState<boolean>(false);
     // Current error. After being set to an error state, useEffect will automatically clear it
@@ -75,11 +77,11 @@ export function AppController() {
     }, [error]);
 
     useCancellableRequest(signal => 
-        NoteController.findByContentTitleContaining(searchTerm, {signal: signal})
+        noteController.findByContentTitleContaining(searchTerm, {signal: signal})
     , [searchTerm], setLoading, setFilteredNotes, setError);
 
     useCancellableRequest(signal => 
-        NoteController.findBetweenDates(rangeStart, rangeEnd, {signal: signal})
+        noteController.findBetweenDates(rangeStart, rangeEnd, {signal: signal})
     , [rangeStart, rangeEnd], setLoading, setFilteredNotes, setError);
 
     const onNoteEditSubmit = (note : Note) : void => {
@@ -88,15 +90,15 @@ export function AppController() {
         let method : (param: Note) => Promise<Note>;
         // if note ID does not exist, we need to POST, otherwise PUT
         if (note.id === null) {
-            method = NoteController.postNote;
+            // "THIS" IS THE SOURCE OF THE PROBLEM. 'THIS' REFERS TO SOMETHING OTHER THAN THE INSTANCE OF NOTECONTROLLER
+            method = (note) => noteController.postNote(note);
         }
         else {
-            method = NoteController.putNote;
+            method = (note) => noteController.putNote(note);
         }
 
         method(note)
             .then(note => {
-                setLoading(false);
                 // need to refresh list of notes, not sure how to do this yet
                 // or, possibly we should just return to the current search filter.
                 // either way, we should establish a 'baseline' or 'default' note display and
@@ -106,6 +108,7 @@ export function AppController() {
             .catch(err => {
                 setError(err);
             })
+            .finally(() => setLoading(false));
     }
 
     const logo = <img src={Scroll} alt={"RJournal Scroll Icon"}/>;
@@ -122,8 +125,8 @@ export function AppController() {
                     ? <AppLayout logo={logo} navbar={navbar} sidebar={sidebar} main={main} />
                     : <LoginPage setAuthenticated={setAuthenticated} />}
                 {error && <p id="error-toast">{error.name}: {error.message}</p>}
-                {isEditing && <NoteEditor note={activeNote} setNote={setActiveNote} onSubmit={onNoteEditSubmit} onCancel={() => {}} />}
-            </NoteEditingContext.Provider>
+                {isEditing && <NoteEditor note={activeNote} setNote={setActiveNote} onSubmit={onNoteEditSubmit} onCancel={() => setActiveNote(null)} />}
+            </NoteEditingContext.Provider>  
         </DateFilteringContext.Provider>
     </SearchFilteringContext.Provider>);
 

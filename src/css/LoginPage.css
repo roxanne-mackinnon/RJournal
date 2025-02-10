@@ -8,9 +8,12 @@
     background-color: var(--darkbrown);
     border-radius: 10px;
     box-shadow: 5px 5px 10px 5px gray;
+    width: 300px;
+    height: 200px;
 }
 
 .login-page > * {
     display: block;
     margin: 10px;
+    height: auto;
 }

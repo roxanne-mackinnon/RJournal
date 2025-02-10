@@ -35,10 +35,17 @@ type SignalParam = {signal: AbortSignal | null};
 export class NoteController {
     
 
-    static notes = notedata;
-    static idCounter = 0;
+    notes : Note[] = notedata;
+    idCounter : number= notedata.length;
+    static instance : NoteController|null = null;
 
-    static findById(id: number, signal: SignalParam = {signal: null}) : Promise<Note> {
+    //  not thread safe
+    constructor() {
+        if (NoteController.instance !== null) return NoteController.instance;
+        NoteController.instance = this;
+    }
+
+    findById(id: number, signal: SignalParam = {signal: null}) : Promise<Note> {
         const callback = () => {
             for (let note of this.notes) {
                 if (note.id === id) {
@@ -51,12 +58,12 @@ export class NoteController {
         return this.#dispatchWithSignal(callback, signal);
     }
     
-    static findAll(signal: SignalParam = {signal: null}) : Promise<Note[]> {
+    findAll(signal: SignalParam = {signal: null}) : Promise<Note[]> {
         return this.#dispatchWithSignal(() => this.notes, signal);
     }
 
     // NOT THREADSAFE
-    static postNote(newNote: Note, signal: SignalParam = {signal: null}) : Promise<Note> {
+    postNote(newNote: Note, signal: SignalParam = {signal: null}) : Promise<Note> {
         const callback = () => {
             // set ID and creation date for note
             newNote.id = this.idCounter;  
@@ -71,7 +78,7 @@ export class NoteController {
         return this.#dispatchWithSignal(callback, signal);
     }
 
-    static putNote(note: Note, signal: SignalParam = {signal: null}) : Promise<Note> {
+    putNote(note: Note, signal: SignalParam = {signal: null}) : Promise<Note> {
         const callback = () => {
             for (let i = 0; i < this.notes.length; i++) {
                 if (note.id === this.notes[i].id) {
@@ -86,7 +93,7 @@ export class NoteController {
         return this.#dispatchWithSignal(callback, signal);
     }
 
-    static deleteById(noteId: number, signal: SignalParam = {signal: null}) {
+    deleteById(noteId: number, signal: SignalParam = {signal: null}) {
         const callback = () => {
             for (let i = 0; i < this.notes.length; i++) {
                 if (this.notes[i].id === noteId) {
@@ -101,7 +108,7 @@ export class NoteController {
         return this.#dispatchWithSignal(callback, signal);
     }
 
-    static findByDate(date: Date, signal: SignalParam = {signal: null}) : Promise<Note[]>{
+    findByDate(date: Date, signal: SignalParam = {signal: null}) : Promise<Note[]>{
         const callback = () => {
             let result = [];
             for (let note of this.notes) {
@@ -114,7 +121,7 @@ export class NoteController {
         return this.#dispatchWithSignal(callback, signal);
     }
 
-    static findBetweenDates(startDate: Date|null, endDate: Date|null, signal: SignalParam = {signal: null}) : Promise<Note[]>{
+    findBetweenDates(startDate: Date|null, endDate: Date|null, signal: SignalParam = {signal: null}) : Promise<Note[]>{
         if (startDate === null || endDate === null) throw new Error("Empty Date Range.");
         const callback = () => {
             let result = [];
@@ -129,7 +136,7 @@ export class NoteController {
         return this.#dispatchWithSignal(callback, signal);
     }
 
-    static findByContentTitleContaining(substring: string, signal: SignalParam = {signal: null}) : Promise<Note[]>{
+    findByContentTitleContaining(substring: string, signal: SignalParam = {signal: null}) : Promise<Note[]>{
         const callback = () => {
             let lowerSubstring = substring.toLowerCase();
            return this.notes.filter(note => 
@@ -140,7 +147,7 @@ export class NoteController {
         return this.#dispatchWithSignal(callback, signal);
     }
 
-    static #dispatchWithSignal<T>(callback: () => T, {signal} : SignalParam = {signal:null}) : Promise<T>{
+    #dispatchWithSignal<T>(callback: () => T, {signal} : SignalParam = {signal:null}) : Promise<T>{
         // if signal is not present, should still work
         return new Promise((resolve, reject) => {
             if (signal?.aborted) reject(signal.reason);

@@ -10,5 +10,7 @@
     background-color: var(--black);
     color: var(--white);
     border: 2px solid var(--darkgray);
+    min-height: 40px;
+    overflow: hidden;
 }
 

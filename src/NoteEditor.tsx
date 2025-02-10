@@ -14,8 +14,8 @@ export default function NoteEditor({note, setNote, onSubmit, onCancel} : NoteEdi
 
 
     return (
-    <div className="dialog-container">
-        <div className="note-editor">
+    <div className="dialog-container" onClick={onCancel}>
+        <div className="note-editor" onClick={e => e.stopPropagation()}>
             <input className="NE-title" id="noteTitle" type="text" value={note.title} onChange={e => setNote({...note, 'title': e.target.value})}></input>
             <textarea className="NE-content"id="noteContent" value={note.content} onChange={e => setNote({...note, 'content': e.target.value})}></textarea>
             <button onClick={() => onSubmit(note)}>Submit</button>
