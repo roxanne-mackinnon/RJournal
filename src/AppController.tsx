@@ -4,19 +4,17 @@
 // it will control the state
 
 import {useState, useEffect} from 'react';
+import {useNoteRequest} from './hooks/Hooks';
 import {DateFilteringContext, NoteEditingContext, SearchFilteringContext} from './Contexts';
 import NoteContainer from './NoteContainer';
-import {NoteController} from './NoteController';
 import LoginPage from './LoginPage';
 import NoteEditor from './NoteEditor';
 import {Note, EmptyNote} from './models/Note';
 import AppLayout from './AppLayout';
 import NavBar from './NavBar';
-import SideBar from './SideBar';
+import {SideBar, SideBarItem} from './SideBar';
 import Scroll from './assets/Scroll.svg';
 import './css/AppController.css';
-
-const noteController = new NoteController();
 
 // use a NoteController method for filtering notes, which cancels a request
 // if the query parameters (in the dependency array) are changed before the request returns
@@ -67,6 +65,8 @@ export function AppController() {
     const [searchTerm, setSearchTerm] = useState<string>("");
 
     const [loading, setLoading] = useState<boolean>(false);
+
+    const noteController = useNoteRequest();
 
     const isEditing = activeNote!==null ? true : false;
 
