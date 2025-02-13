@@ -40,7 +40,7 @@ export default function Calendar() {
     }
 
     return (
-        <div className={`calendar`}>
+        <div className={`calendar`} onClick={e => e.stopPropagation()}>
             <p>{date.getFullYear()}</p>
             <div className="month-selector">
                 <span onClick={decrementMonth}>Left</span>

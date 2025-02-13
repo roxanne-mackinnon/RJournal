@@ -5,7 +5,7 @@
     margin: 0;
 }
 
-.sidebar > li {
+.sidebar-item {
     padding: 10px;
     background-color: var(--black);
     color: var(--white);
@@ -14,3 +14,6 @@
     overflow: hidden;
 }
 
+.sidebar-item > p {
+    pointer-events: none;
+}

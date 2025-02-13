@@ -15,6 +15,7 @@ export default function SearchBar() {
 
     return (
     <input className="search-bar" type="text" value={searchTerm}
-        onChange={(e: {target: HTMLInputElement}) => setSearchTerm(e.target.value)}>
+        onChange={(e: {target: HTMLInputElement}) => setSearchTerm(e.target.value)}
+        onClick={e => e.stopPropagation()}>
     </input>);
 }

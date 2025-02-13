@@ -13,6 +13,8 @@ import {Note, EmptyNote} from './models/Note';
 import AppLayout from './AppLayout';
 import NavBar from './NavBar';
 import {SideBar, SideBarItem} from './SideBar';
+import SearchBar from './SearchBar';
+import Calendar from './Calendar';
 import Scroll from './assets/Scroll.svg';
 import './css/AppController.css';
 
@@ -113,7 +115,12 @@ export function AppController() {
 
     const logo = <img src={Scroll} alt={"RJournal Scroll Icon"}/>;
     const navbar = <NavBar />;
-    const sidebar = <SideBar />
+    const sidebar = <SideBar items={[
+        SideBarItem("all", "All Notes"),
+        SideBarItem("tags", "Filter By Tag"),
+        SideBarItem("date", "Filter By Date", [<Calendar />]),
+        SideBarItem("search", "Search", [<SearchBar />])
+    ]}/>
     const main = <NoteContainer notes={filteredNotes} onNoteSelected={note => setActiveNote(note)}
                                onCreateNote={() => setActiveNote(EmptyNote())} loading={loading}/>
 
