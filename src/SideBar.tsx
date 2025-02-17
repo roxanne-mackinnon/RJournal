@@ -28,7 +28,6 @@ export function SideBar({items}: {items: SideBarItem[]}) {
         if (clicked === state) {setClicked(null)}
         else {
             setClicked(state)
-            state.onSelect();
         }
     }
 
@@ -36,12 +35,19 @@ export function SideBar({items}: {items: SideBarItem[]}) {
 
     const clickedStyle = {backgroundColor: 'var(--white)', color: 'var(--black)'};
 
+    const triggerOnSelect = (item: SideBarItem) => {
+        if (!isClicked(item)) {
+            item.onSelect();
+        }
+    }
+
     // but if one of the sidebar elements has a sublist we still want to expand that...
     // if one of 'items' has children, render those inside
     return (
     <ul className="sidebar">
         {items.map(item => 
-            <li className="sidebar-item" id={`sidebar-item-${item.id}`} style={isClicked(item) ? clickedStyle : undefined} onClick={() => toggleClicked(item)}>
+            <li className="sidebar-item" id={`sidebar-item-${item.id}`} style={isClicked(item) ? clickedStyle : undefined}
+                onClick={() => {triggerOnSelect(item); toggleClicked(item)}}>
                 {<p>{item.desc}</p>}
                 {isClicked(item) && item.children}
             </li>

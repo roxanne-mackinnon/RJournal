@@ -95,7 +95,7 @@ export default function NoteListView({notes, onNoteSelected, onCreateNote, loadi
                     </NoteDateView>
                 )}
             </div>
-            <button id="create-note-btn" onClick={onCreateNote}>Click Me!</button>
+            <button id="create-note-btn" onClick={onCreateNote}>Create Note</button>
         </div>
     );
 }

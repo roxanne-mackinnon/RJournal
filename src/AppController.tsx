@@ -68,6 +68,11 @@ export function AppController() {
 
     const [loading, setLoading] = useState<boolean>(false);
 
+    // should do setFetchAll(s => !s) to trigger to fetch all notes
+    // should change to reducer later
+    const [fetchAll, setFetchAll] = useState<boolean>(false);
+    const triggerFetchAll = () => setFetchAll(s => !s);
+
     const noteController = useNoteRequest();
 
     const isEditing = activeNote!==null ? true : false;
@@ -85,6 +90,10 @@ export function AppController() {
     useCancellableRequest(signal => 
         noteController.findBetweenDates(rangeStart, rangeEnd, {signal: signal})
     , [rangeStart, rangeEnd], setLoading, setFilteredNotes, setError);
+
+    useCancellableRequest(signal => 
+        noteController.findAll({signal: signal})
+    , [fetchAll], setLoading, setFilteredNotes, setError);
 
     const onNoteEditSubmit = (note : Note) : void => {
         setLoading(true);
@@ -116,8 +125,7 @@ export function AppController() {
     const logo = <img src={Scroll} alt={"RJournal Scroll Icon"}/>;
     const navbar = <NavBar />;
     const sidebar = <SideBar items={[
-        SideBarItem("all", "All Notes"),
-        SideBarItem("tags", "Filter By Tag"),
+        SideBarItem("all", "All Notes", [], triggerFetchAll),
         SideBarItem("date", "Filter By Date", [<Calendar />]),
         SideBarItem("search", "Search", [<SearchBar />])
     ]}/>
